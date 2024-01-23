@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import moment from "moment";
 
 import Input from "../ui/Input";
@@ -10,16 +10,19 @@ import Button from "../ui/Button";
 const getcurrentDate = new Date();
 const formattedDate = moment(getcurrentDate).format("DD-MM-YYYY");
 
-export default function ManageScreen() {
+export default function ManageScreen({ navigation }) {
   const [addDate, setAddDate] = useState(formattedDate);
   const entriesCTX = useContext(CalendarContext);
 
   useEffect(() => {
     if (entriesCTX.entries !== undefined) {
-      console.log(entriesCTX.entries);
       setAddDate(entriesCTX.entries);
     }
   }, [entriesCTX]);
+
+  /* if (navigation.navigate("Home")) {
+    entriesCTX.entries = "";
+  } */
 
   return (
     <View style={styles.container}>

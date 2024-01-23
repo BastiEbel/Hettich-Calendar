@@ -12,8 +12,9 @@ export const CalendarContext = createContext({
 function calendarReducer(state, action) {
   switch (action.type) {
     case "SET":
+      let date = action.payload;
       let combineDate = `${date.startDate} - ${date.lastDate}`;
-      return [{ ...action.payload, combineDate }, ...state];
+      return combineDate;
     default:
       return state;
   }
