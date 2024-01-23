@@ -1,5 +1,4 @@
-import { createContext, useState } from "react";
-import { Entries } from "../models/entries";
+import { createContext, useReducer, useState } from "react";
 
 export const CalendarContext = createContext({
   entries: {},
@@ -10,15 +9,24 @@ export const CalendarContext = createContext({
   deleteCalendarEntry: (id) => {}
 });
 
+function calendarReducer(state, action) {
+  switch (action.type) {
+    case "SET":
+      let combineDate = `${date.startDate} - ${date.lastDate}`;
+      return [{ ...action.payload, combineDate }, ...state];
+    default:
+      return state;
+  }
+}
+
 function CalendarContextProvider({ children }) {
-  const [dateEntries, setDateEntries] = useState([]);
+  const [entriesState, dispatch] = useReducer(calendarReducer);
 
   function getCalendarDate(date) {
-    let combineDate = `${date.startDate} - ${date.lastDate}`;
-    setDateEntries(combineDate);
+    dispatch({ type: "SET", payload: date });
   }
 
-  const value = { entries: dateEntries, getCalendarDate: getCalendarDate };
+  const value = { entries: entriesState, getCalendarDate: getCalendarDate };
   return (
     <CalendarContext.Provider value={value}>
       {children}

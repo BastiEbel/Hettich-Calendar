@@ -1,22 +1,32 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import moment from "moment";
 
 import Input from "../ui/Input";
 import { GlobalStyles } from "../constants/styles";
 import { CalendarContext } from "../store/calendar-context";
 import Button from "../ui/Button";
 
+const getcurrentDate = new Date();
+const formattedDate = moment(getcurrentDate).format("DD-MM-YYYY");
+
 export default function ManageScreen() {
+  const [addDate, setAddDate] = useState(formattedDate);
   const entriesCTX = useContext(CalendarContext);
 
-  console.log(entriesCTX.entries);
+  useEffect(() => {
+    if (entriesCTX.entries !== undefined) {
+      console.log(entriesCTX.entries);
+      setAddDate(entriesCTX.entries);
+    }
+  }, [entriesCTX]);
 
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
         <Input label="Title" size={40} />
         <Input size={100} multiline />
-        <Input label="Date" size={40} />
+        <Input label="Date" size={40} value={addDate} disabled={false} />
       </View>
       <View style={styles.buttonContainer}>
         <Button style={styles.style} mode="flat">

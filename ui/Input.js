@@ -1,6 +1,6 @@
 import { TextInput, View, Text, StyleSheet } from "react-native";
 
-export default function Input({ label, value, multiline, size }) {
+export default function Input({ label, value, multiline, size, disabled }) {
   const inputStyles = {
     height: size,
     backgroundColor: "#fff",
@@ -22,7 +22,7 @@ export default function Input({ label, value, multiline, size }) {
   return (
     <View style={styles.container}>
       <Text style={styles.textLabel}>{label}:</Text>
-      <TextInput style={inputStyles} />
+      <TextInput style={inputStyles} value={value} editable={disabled} />
     </View>
   );
 }
