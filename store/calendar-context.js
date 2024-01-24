@@ -13,7 +13,12 @@ function calendarReducer(state, action) {
   switch (action.type) {
     case "SET":
       let date = action.payload;
-      let combineDate = `${date.startDate} - ${date.lastDate}`;
+      let combineDate = "";
+      if (date.startDate === date.lastDate) {
+        combineDate = date.startDate;
+      } else {
+        combineDate = `${date.startDate} - ${date.lastDate}`;
+      }
       return combineDate;
     default:
       return state;

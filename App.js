@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
@@ -9,12 +9,29 @@ import IconButton from "./ui/IconButton";
 import Home from "./screens/Home";
 import ManageScreen from "./screens/ManageScreen";
 import WeekScreen from "./screens/WeekScreen";
-import CalendarContextProvider from "./store/calendar-context";
+import CalendarContextProvider, {
+  CalendarContext
+} from "./store/calendar-context";
+import moment from "moment";
+import { useContext } from "react";
+import { Entries } from "./models/entries";
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
 
 function ManageCalendarOverview() {
+  const navigation = useNavigation();
+  const getcurrentDate = new Date();
+  const formattedDate = moment(getcurrentDate).format("DD-MM-YYYY");
+  const entriesCtx = useContext(CalendarContext);
+  const entries = new Entries();
+
+  function addEntriesManagement() {
+    entries.date = { startDate: formattedDate, lastDate: formattedDate };
+    entriesCtx.getCalendarDate(entries.date);
+    navigation.navigate("ManageScreen");
+  }
+
   return (
     <BottomTabs.Navigator
       screenOptions={({ navigation }) => ({
@@ -28,9 +45,7 @@ function ManageCalendarOverview() {
             icon="add"
             size={24}
             color={tintColor}
-            onPress={() => {
-              navigation.navigate("ManageScreen");
-            }}
+            onPress={addEntriesManagement}
           />
         )
       })}
