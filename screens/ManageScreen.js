@@ -1,15 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
+import moment from "moment";
 
 import Input from "../ui/Input";
 import { GlobalStyles } from "../constants/styles";
 import { CalendarContext } from "../store/calendar-context";
 import Button from "../ui/Button";
 import { Entries } from "../models/entries";
+import AddDateTime from "../components/AddDateTime";
 
 export default function ManageScreen({ navigation }) {
   const entriesCTX = useContext(CalendarContext);
   const [addDate, setAddDate] = useState(entriesCTX.entries);
+  const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
 
   const entries = new Entries();
 
@@ -17,16 +21,45 @@ export default function ManageScreen({ navigation }) {
     setAddDate(entriesCTX.entries);
   }, [entriesCTX]);
 
+  function onToggleDatePicker() {
+    setShowPicker(!showPicker);
+  }
+
+  function onChange(date) {
+    const currentDate = date;
+    setDate(currentDate);
+    if (Platform.OS === "android") {
+      onToggleDatePicker();
+      const formattedDate = moment(currentDate).format("DD-MM-YYYY");
+      entries.date = { startDate: formattedDate, lastDate: formattedDate };
+      entriesCTX.getCalendarDate(entries.date);
+    }
+  }
+
   function cancelActionHandler() {
-    navigation.navigate("Home");
+    navigation.goBack();
   }
 
   return (
     <View style={styles.container}>
+      {showPicker && (
+        <AddDateTime
+          value={date}
+          display="spinner"
+          mode="date"
+          onChange={onChange}
+        />
+      )}
       <View style={styles.inputContainer}>
         <Input label="Title" size={40} />
         <Input size={100} multiline />
-        <Input label="Date" size={40} value={addDate} disabled={false} />
+        <Input
+          label="Date"
+          size={40}
+          value={addDate}
+          disabled={false}
+          onPress={onToggleDatePicker}
+        />
       </View>
       <View style={styles.buttonContainer}>
         <Button onPress={cancelActionHandler} style={styles.style} mode="flat">

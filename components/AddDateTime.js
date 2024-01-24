@@ -1,16 +1,17 @@
-import { View, Button } from "react-native";
-import React, { useState } from "react";
+import { View } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 //import Button from "../ui/Button";
 
-const AddDateTime = () => {
-  const [date, setDate] = useState(new Date());
-  const [open, setOpen] = useState(false);
-
+const AddDateTime = ({ value, display, mode, onChange }) => {
   return (
     <View>
-      <DateTimePicker value={date} display="spinner" mode="date" />
+      <DateTimePicker
+        value={value}
+        display={display}
+        mode={mode}
+        onChange={onChange}
+      />
     </View>
   );
 };
