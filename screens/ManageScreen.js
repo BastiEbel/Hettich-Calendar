@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import moment from "moment";
 
@@ -17,7 +17,7 @@ export default function ManageScreen({ navigation }) {
 
   const entries = new Entries();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setAddDate(entriesCTX.entries);
   }, [entriesCTX]);
 
@@ -25,14 +25,18 @@ export default function ManageScreen({ navigation }) {
     setShowPicker(!showPicker);
   }
 
-  function onChange(date) {
-    const currentDate = date;
-    setDate(currentDate);
-    if (Platform.OS === "android") {
+  function onChange({ type }, date) {
+    if (type == "set") {
+      const currentDate = date;
+      setDate(currentDate);
+      if (Platform.OS === "android") {
+        onToggleDatePicker();
+        const formattedDate = moment(currentDate).format("DD-MM-YYYY");
+        entries.date = { startDate: formattedDate, lastDate: formattedDate };
+        entriesCTX.getCalendarDate(entries.date);
+      }
+    } else {
       onToggleDatePicker();
-      const formattedDate = moment(currentDate).format("DD-MM-YYYY");
-      entries.date = { startDate: formattedDate, lastDate: formattedDate };
-      entriesCTX.getCalendarDate(entries.date);
     }
   }
 
