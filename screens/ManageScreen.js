@@ -8,10 +8,12 @@ import { CalendarContext } from "../store/calendar-context";
 import Button from "../ui/Button";
 import { Entries } from "../models/entries";
 import AddDateTime from "../components/AddDateTime";
+import SelectBox from "../components/SelectBox";
 
 export default function ManageScreen({ navigation }) {
   const entriesCTX = useContext(CalendarContext);
   const [addDate, setAddDate] = useState(entriesCTX.entries);
+  const [showDescription, setShowDescription] = useState(false);
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
 
@@ -56,7 +58,8 @@ export default function ManageScreen({ navigation }) {
       )}
       <View style={styles.inputContainer}>
         <Input label="Title" size={40} />
-        <Input size={100} multiline />
+        <SelectBox />
+        {showDescription && <Input size={100} multiline />}
         <Input
           label="Date"
           size={40}
@@ -83,9 +86,9 @@ const styles = StyleSheet.create({
     backgroundColor: GlobalStyles.colors.primary100
   },
   inputContainer: {
-    justifyContent: "center",
+    minHeight: 250,
+    justifyContent: "space-between",
     alignItems: "center",
-    maxHeight: 350,
     paddingVertical: 24
   },
   buttonContainer: {
