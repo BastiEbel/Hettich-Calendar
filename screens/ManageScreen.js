@@ -21,7 +21,8 @@ export default function ManageScreen({ navigation }) {
 
   useLayoutEffect(() => {
     setAddDate(entriesCTX.entries);
-  }, [entriesCTX]);
+    setShowPicker(false);
+  }, [entriesCTX, date]);
 
   function onToggleDatePicker() {
     setShowPicker(!showPicker);
@@ -31,12 +32,10 @@ export default function ManageScreen({ navigation }) {
     if (type == "set") {
       const currentDate = date;
       setDate(currentDate);
-      if (Platform.OS === "android") {
-        onToggleDatePicker();
-        const formattedDate = moment(currentDate).format("DD-MM-YYYY");
-        entries.date = { startDate: formattedDate, lastDate: formattedDate };
-        entriesCTX.getCalendarDate(entries.date);
-      }
+      const formattedDate = moment(currentDate).format("DD-MM-YYYY");
+      entries.date = { startDate: formattedDate, lastDate: formattedDate };
+      entriesCTX.getCalendarDate(entries.date);
+      onToggleDatePicker();
     } else {
       onToggleDatePicker();
     }
@@ -65,7 +64,7 @@ export default function ManageScreen({ navigation }) {
           size={40}
           value={addDate}
           disabled={false}
-          onPress={onToggleDatePicker}
+          onPress={onChange}
         />
       </View>
       <View style={styles.buttonContainer}>
