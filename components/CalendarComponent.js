@@ -70,6 +70,21 @@ export default function CalendarComponent() {
         });
         navigation.navigate("ManageScreen");
         entriesCTX.getCalendarDate(entries.date);
+      } else if (day.dateString === day.dateString) {
+        setMarkedState({
+          ...markedState,
+          markedDates: markedDates,
+          isStartDatePicked: true,
+          isEndDatePicked: true,
+          startDate: day.dateString,
+          markedType: ""
+        });
+        entries.date = {
+          startDate: moment(markedState.startDate).format("DD-MM-YYYY"),
+          lastDate: moment(markedState.startDate).format("DD-MM-YYYY")
+        };
+        navigation.navigate("ManageScreen");
+        entriesCTX.getCalendarDate(entries.date);
       } else {
         alert("Select an upcomming date!");
       }

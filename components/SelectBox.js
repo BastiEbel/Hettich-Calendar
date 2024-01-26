@@ -14,13 +14,13 @@ function SelectBox() {
   ];
 
   return (
-    <View>
+    <View style={styles.container}>
       <SelectList
         setSelected={(val) => setSelected(val)}
         data={data}
         save="value"
         boxStyles={{
-          width: 250,
+          width: 300,
           borderColor: GlobalStyles.colors.primary700,
           backgroundColor: "white"
         }}
@@ -44,9 +44,6 @@ export default SelectBox;
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    flex: 1,
-    paddingVertical: 20,
-    paddingHorizontal: 20
+    marginTop: 32
   }
 });

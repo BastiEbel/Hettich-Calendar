@@ -1,5 +1,5 @@
 import React, { useContext, useLayoutEffect, useState } from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import moment from "moment";
 
 import Input from "../ui/Input";
@@ -35,7 +35,7 @@ export default function ManageScreen({ navigation }) {
       const formattedDate = moment(currentDate).format("DD-MM-YYYY");
       entries.date = { startDate: formattedDate, lastDate: formattedDate };
       entriesCTX.getCalendarDate(entries.date);
-      onToggleDatePicker();
+      //onToggleDatePicker();
     } else {
       onToggleDatePicker();
     }
@@ -56,22 +56,29 @@ export default function ManageScreen({ navigation }) {
         />
       )}
       <View style={styles.inputContainer}>
-        <Input label="Title" size={40} />
+        <Input placeholder="Title" label="Title" size={40} />
         <SelectBox />
-        {showDescription && <Input size={100} multiline />}
+        {showDescription && (
+          <Input placeholder="Description" size={100} multiline />
+        )}
         <Input
+          placeholder="DD-MM-YYYY"
           label="Date"
           size={40}
           value={addDate}
-          disabled={false}
+          shown={true}
           onPress={onChange}
         />
       </View>
       <View style={styles.buttonContainer}>
-        <Button onPress={cancelActionHandler} style={styles.style} mode="flat">
+        <Button
+          onPress={cancelActionHandler}
+          style={styles.styleButton}
+          mode="flat"
+        >
           Cancel
         </Button>
-        <Button style={styles.style}>Add</Button>
+        <Button style={styles.styleButton}>Add</Button>
       </View>
     </View>
   );
@@ -80,12 +87,14 @@ export default function ManageScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: GlobalStyles.colors.primary100
   },
   inputContainer: {
-    minHeight: 250,
+    width: 300,
+    flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 24
@@ -95,7 +104,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center"
   },
-  style: {
+  styleButton: {
     minWidth: 80,
     marginHorizontal: 16
   }
