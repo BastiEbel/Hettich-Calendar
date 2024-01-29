@@ -2,6 +2,7 @@ import { createContext, useReducer, useState } from "react";
 
 export const CalendarContext = createContext({
   entries: {},
+  multiDateSelected: false,
   addCalendarEntry: ({ title, date, description }) => {},
   getCalendarDate: ({ date }) => {},
   getCalendarValue: (items) => {},
@@ -26,13 +27,23 @@ function calendarReducer(state, action) {
 }
 
 function CalendarContextProvider({ children }) {
+  const [multiSelected, setMultiSelected] = useState(false);
   const [entriesState, dispatch] = useReducer(calendarReducer);
 
   function getCalendarDate(date) {
     dispatch({ type: "SET", payload: date });
+    if (date.startDate === date.lastDate) {
+      setMultiSelected(false);
+    } else {
+      setMultiSelected(true);
+    }
   }
 
-  const value = { entries: entriesState, getCalendarDate: getCalendarDate };
+  const value = {
+    entries: entriesState,
+    multiDateSelected: multiSelected,
+    getCalendarDate: getCalendarDate
+  };
   return (
     <CalendarContext.Provider value={value}>
       {children}

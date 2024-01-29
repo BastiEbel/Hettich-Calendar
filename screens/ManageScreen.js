@@ -22,7 +22,7 @@ export default function ManageScreen({ navigation }) {
   useLayoutEffect(() => {
     setAddDate(entriesCTX.entries);
     setShowPicker(false);
-  }, [entriesCTX, date]);
+  }, [entriesCTX]);
 
   function onToggleDatePicker() {
     setShowPicker(!showPicker);
@@ -35,11 +35,13 @@ export default function ManageScreen({ navigation }) {
       const formattedDate = moment(currentDate).format("DD-MM-YYYY");
       entries.date = { startDate: formattedDate, lastDate: formattedDate };
       entriesCTX.getCalendarDate(entries.date);
-      //onToggleDatePicker();
+      setShowPicker(false);
     } else {
       onToggleDatePicker();
     }
   }
+
+  function setSelectedValue(val) {}
 
   function cancelActionHandler() {
     navigation.goBack();
@@ -57,7 +59,7 @@ export default function ManageScreen({ navigation }) {
       )}
       <View style={styles.inputContainer}>
         <Input placeholder="Title" label="Title" size={40} />
-        <SelectBox />
+        <SelectBox selectedValue={(val) => setSelectedValue(val)} />
         {showDescription && (
           <Input placeholder="Description" size={100} multiline />
         )}

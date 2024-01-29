@@ -1,22 +1,37 @@
 import { SelectList } from "react-native-dropdown-select-list";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { GlobalStyles } from "../constants/styles";
+import { CalendarContext } from "../store/calendar-context";
 
-function SelectBox() {
-  const [selected, setSelected] = useState("");
+const data = [
+  { key: "0", value: "Vacation" },
+  { key: "1", value: "Task" },
+  { key: "2", value: "Reminder" },
+  { key: "3", value: "Date" }
+];
 
-  const data = [
-    { key: "1", value: "Vacation" },
-    { key: "2", value: "Task" },
-    { key: "3", value: "Reminder" },
-    { key: "4", value: "Date" }
-  ];
+function SelectBox({ selectedValue }) {
+  const [selected, setSelected] = useState(data[0].value);
+  const [changePlaceholder, setChangePlaceholder] = useState("");
+  const entriesCTX = useContext(CalendarContext);
+  selectedValue(selected);
+
+  useEffect(() => {
+    if (entriesCTX.multiDateSelected) {
+      setChangePlaceholder(selected);
+    } else {
+      setChangePlaceholder("Select Option");
+    }
+  }, [entriesCTX.multiDateSelected]);
 
   return (
     <View style={styles.container}>
       <SelectList
-        setSelected={(val) => setSelected(val)}
+        placeholder={changePlaceholder}
+        search={false}
+        onSelect={(val) => setSelected(val)}
+        setSelected={selected}
         data={data}
         save="value"
         boxStyles={{
