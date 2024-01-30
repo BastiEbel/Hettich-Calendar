@@ -1,4 +1,4 @@
-import React, { useContext, useLayoutEffect, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import moment from "moment";
 
@@ -19,7 +19,7 @@ export default function ManageScreen({ navigation }) {
 
   const entries = new Entries();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setAddDate(entriesCTX.entries);
     setShowPicker(false);
   }, [entriesCTX]);
@@ -41,11 +41,20 @@ export default function ManageScreen({ navigation }) {
     }
   }
 
-  function setSelectedValue(val) {}
+  function setSelectedValue(val) {
+    if (val === "Reminder" || val === "Task") {
+      setShowDescription(true);
+    } else {
+      setShowDescription(false);
+    }
+    console.log(val);
+  }
 
   function cancelActionHandler() {
     navigation.goBack();
   }
+
+  function onAddHandler() {}
 
   return (
     <View style={styles.container}>
@@ -59,10 +68,12 @@ export default function ManageScreen({ navigation }) {
       )}
       <View style={styles.inputContainer}>
         <Input placeholder="Title" label="Title" size={40} />
-        <SelectBox selectedValue={(val) => setSelectedValue(val)} />
         {showDescription && (
           <Input placeholder="Description" size={100} multiline />
         )}
+        <View style={showDescription ? styles.selectContainer : null}>
+          <SelectBox selectedValue={setSelectedValue} />
+        </View>
         <Input
           placeholder="DD-MM-YYYY"
           label="Date"
@@ -71,16 +82,18 @@ export default function ManageScreen({ navigation }) {
           shown={true}
           onPress={onChange}
         />
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button
-          onPress={cancelActionHandler}
-          style={styles.styleButton}
-          mode="flat"
-        >
-          Cancel
-        </Button>
-        <Button style={styles.styleButton}>Add</Button>
+        <View style={styles.buttonContainer}>
+          <Button
+            onPress={cancelActionHandler}
+            style={styles.styleButton}
+            mode="flat"
+          >
+            Cancel
+          </Button>
+          <Button onPress={onAddHandler} style={styles.styleButton}>
+            Add
+          </Button>
+        </View>
       </View>
     </View>
   );
@@ -96,12 +109,15 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: 300,
-    flexDirection: "column",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     paddingVertical: 24
   },
+  selectContainer: {
+    marginTop: 60
+  },
   buttonContainer: {
+    marginVertical: 48,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center"

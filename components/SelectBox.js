@@ -12,32 +12,32 @@ const data = [
 ];
 
 function SelectBox({ selectedValue }) {
-  const [selected, setSelected] = useState(data[0].value);
+  const [selected, setSelected] = useState("");
   const [changePlaceholder, setChangePlaceholder] = useState("");
   const entriesCTX = useContext(CalendarContext);
-  selectedValue(selected);
 
   useEffect(() => {
     if (entriesCTX.multiDateSelected) {
-      setChangePlaceholder(selected);
+      setChangePlaceholder("Vacation");
     } else {
       setChangePlaceholder("Select Option");
     }
-  }, [entriesCTX.multiDateSelected]);
+    selectedValue(selected);
+  }, [entriesCTX.multiDateSelected, selected]);
 
   return (
-    <View style={styles.container}>
+    <View>
       <SelectList
         placeholder={changePlaceholder}
         search={false}
-        onSelect={(val) => setSelected(val)}
-        setSelected={selected}
+        setSelected={(val) => setSelected(val)}
         data={data}
         save="value"
         boxStyles={{
           width: 300,
           borderColor: GlobalStyles.colors.primary700,
-          backgroundColor: "white"
+          backgroundColor: "white",
+          marginTop: 32
         }}
         dropdownStyles={{
           width: "100%",
@@ -59,6 +59,6 @@ export default SelectBox;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 32
+    marginTop: 16
   }
 });

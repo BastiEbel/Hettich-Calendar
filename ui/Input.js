@@ -12,7 +12,6 @@ export default function Input({
   onPress
 }) {
   const inputStyles = {
-    flex: 1,
     justifyContent: "flex-start",
     height: size,
     backgroundColor: "#fff",
@@ -40,7 +39,7 @@ export default function Input({
       <View style={styles.dateContainer}>
         <TextInput
           placeholder={placeholder}
-          style={inputStyles}
+          style={[inputStyles, styles.input]}
           value={value}
         />
         {shown && (
@@ -62,7 +61,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     justifyContent: "flex-start",
-    marginVertical: 32
+    marginVertical: 24
   },
 
   textLabel: {
@@ -86,5 +85,8 @@ const styles = StyleSheet.create({
     borderColor: GlobalStyles.colors.primary500,
     borderWidth: 2,
     borderRadius: 10
+  },
+  input: {
+    flex: 1
   }
 });
