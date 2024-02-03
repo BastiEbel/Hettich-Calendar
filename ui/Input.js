@@ -1,6 +1,8 @@
 import { TextInput, View, Text, StyleSheet } from "react-native";
 import IconButton from "../ui/IconButton";
 import { GlobalStyles } from "../constants/styles";
+import { useRef, useState } from "react";
+import { Entries } from "../models/entries";
 
 export default function Input({
   placeholder,
@@ -9,10 +11,12 @@ export default function Input({
   multiline,
   size,
   shown,
-  onPress
+  onPress,
+  getValue
 }) {
   const inputStyles = {
     justifyContent: "flex-start",
+    alignItems: "flex-start",
     height: size,
     backgroundColor: "#fff",
     borderWidth: 1,
@@ -21,13 +25,18 @@ export default function Input({
     paddingHorizontal: 16
   };
 
+  function onChangeHandler(text) {
+    getValue(text);
+  }
+
   if (multiline) {
     return (
       <View style={styles.container}>
         <TextInput
           placeholder={placeholder}
-          style={inputStyles}
+          style={[inputStyles, { textAlignVertical: "top", paddingTop: 12 }]}
           multiline={multiline}
+          onChangeText={onChangeHandler}
         />
       </View>
     );
@@ -41,6 +50,7 @@ export default function Input({
           placeholder={placeholder}
           style={[inputStyles, styles.input]}
           value={value}
+          onChangeText={onChangeHandler}
         />
         {shown && (
           <View style={styles.icon}>

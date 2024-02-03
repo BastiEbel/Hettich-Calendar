@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import moment from "moment";
 
@@ -10,14 +10,19 @@ import { Entries } from "../models/entries";
 import AddDateTime from "../components/AddDateTime";
 import SelectBox from "../components/SelectBox";
 
+const entries = new Entries({
+  title: "",
+  description: "",
+  definition: "",
+  date: ""
+});
+
 export default function ManageScreen({ navigation }) {
   const entriesCTX = useContext(CalendarContext);
   const [addDate, setAddDate] = useState(entriesCTX.entries);
   const [showDescription, setShowDescription] = useState(false);
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
-
-  const entries = new Entries();
 
   useEffect(() => {
     setAddDate(entriesCTX.entries);
@@ -28,7 +33,7 @@ export default function ManageScreen({ navigation }) {
     setShowPicker(!showPicker);
   }
 
-  function onChange({ type }, date) {
+  function onDateChange({ type }, date) {
     if (type == "set") {
       const currentDate = date;
       setDate(currentDate);
@@ -47,14 +52,26 @@ export default function ManageScreen({ navigation }) {
     } else {
       setShowDescription(false);
     }
-    console.log(val);
+    entries.definition = val;
   }
 
   function cancelActionHandler() {
     navigation.goBack();
   }
 
-  function onAddHandler() {}
+  function onChangeTitleHandler(value) {
+    entries.title = value;
+    return entries.title;
+  }
+
+  function onChangeHandler(value) {
+    entries.description = value;
+    return entries.description;
+  }
+
+  function onAddHandler() {
+    console.log(addDate, entries);
+  }
 
   return (
     <View style={styles.container}>
@@ -63,13 +80,23 @@ export default function ManageScreen({ navigation }) {
           value={date}
           display="spinner"
           mode="date"
-          onChange={onChange}
+          onDateChange={onDateChange}
         />
       )}
       <View style={styles.inputContainer}>
-        <Input placeholder="Title" label="Title" size={40} />
+        <Input
+          placeholder="Title"
+          label="Title"
+          size={40}
+          getValue={onChangeTitleHandler}
+        />
         {showDescription && (
-          <Input placeholder="Description" size={100} multiline />
+          <Input
+            placeholder="Description"
+            size={100}
+            multiline
+            getValue={onChangeHandler}
+          />
         )}
         <View style={showDescription ? styles.selectContainer : null}>
           <SelectBox selectedValue={setSelectedValue} />
@@ -80,7 +107,6 @@ export default function ManageScreen({ navigation }) {
           size={40}
           value={addDate}
           shown={true}
-          onPress={onChange}
         />
         <View style={styles.buttonContainer}>
           <Button

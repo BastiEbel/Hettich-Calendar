@@ -28,14 +28,16 @@ export default function CalendarComponent() {
       markedDates[day.dateString] = {
         startingDay: true,
         color: "#afdcfc",
-        textColor: "#FFFFFF"
+        textColor: "#FFFFFF",
+        selected: true,
+        selectedColor: "blue"
       };
       setMarkedState({
         ...markedState,
         markedDates: markedDates,
         isStartDatePicked: true,
         startDate: day.dateString,
-        markedType: "period"
+        markedType: ""
       });
     } else {
       let markedDates = markedState.markedDates;
@@ -46,51 +48,68 @@ export default function CalendarComponent() {
       if (range > 0) {
         for (let i = 1; i <= range; i++) {
           let tempDate = startDate.add(1, "day");
-          tempDate = moment(tempDate).format("DD-MM-YYYY");
+          tempDate = moment(tempDate).format("YYYY-MM-DD");
           if (i < range) {
-            markedDates[tempDate] = { color: "#afdcfc", textColor: "#FFFFFF" };
+            markedDates[tempDate] = {
+              color: "#afdcfc",
+              textColor: "#FFFFFF",
+              selected: true,
+              selectedColor: "blue"
+            };
           } else {
             markedDates[tempDate] = {
               endingDay: true,
               color: "#afdcfc",
-              textColor: "#FFFFFF"
+              textColor: "#FFFFFF",
+              selected: true,
+              selectedColor: "blue"
             };
             lastSelectedDate = tempDate;
             entries.date = {
               startDate: moment(markedState.startDate).format("DD-MM-YYYY"),
-              lastDate: tempDate
+              lastDate: moment(tempDate).format("DD-MM-YYYY")
             };
           }
         }
         setMarkedState({
           ...markedState,
           markedDates: markedDates,
-          isStartDatePicked: true,
-          lastDate: lastSelectedDate
-        });
-        navigation.navigate("ManageScreen");
-        entriesCTX.getCalendarDate(entries.date);
-      } else if (day.dateString === day.dateString) {
-        setMarkedState({
-          ...markedState,
-          markedDates: markedDates,
-          isStartDatePicked: true,
           isEndDatePicked: true,
-          startDate: day.dateString,
-          markedType: ""
+          lastDate: lastSelectedDate,
+          markedType: "period"
         });
-        entries.date = {
-          startDate: moment(markedState.startDate).format("DD-MM-YYYY"),
-          lastDate: moment(markedState.startDate).format("DD-MM-YYYY")
-        };
-        navigation.navigate("ManageScreen");
-        entriesCTX.getCalendarDate(entries.date);
+        switchToNextScreen();
+      } else if (day.dateString === day.dateString) {
+        addOneDayHandler(markedDates, day);
       } else {
         alert("Select an upcomming date!");
       }
-      resetMarketDates();
     }
   };
+
+  function addOneDayHandler(markedDates, day) {
+    setMarkedState({
+      ...markedState,
+      markedDates: markedDates,
+      isStartDatePicked: true,
+      isEndDatePicked: true,
+      startDate: day.dateString,
+      markedType: ""
+    });
+    entries.date = {
+      startDate: moment(markedState.startDate).format("DD-MM-YYYY"),
+      lastDate: moment(markedState.startDate).format("DD-MM-YYYY")
+    };
+    switchToNextScreen();
+  }
+
+  function switchToNextScreen() {
+    setTimeout(() => {
+      navigation.navigate("ManageScreen");
+      entriesCTX.getCalendarDate(entries.date);
+      resetMarketDates();
+    }, 2000);
+  }
 
   const resetMarketDates = () => {
     setMarkedState({
@@ -109,6 +128,7 @@ export default function CalendarComponent() {
         current={INITIAL_DATE}
         onDayPress={onDayPress}
         hideExtraDays
+        showWeekNumbers
         markingType={markedState.markedType}
         markedDates={markedState.markedDates}
         maxData={"2050-01-01"}
