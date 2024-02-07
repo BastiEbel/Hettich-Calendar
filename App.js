@@ -65,7 +65,7 @@ function ManageCalendarOverview() {
         name="WeekScreen"
         component={WeekScreen}
         options={{
-          title: "Week Screen",
+          title: "Week Overview",
           tabBarLabel: "Week Screen",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="calendar" size={size} color={color} />
@@ -97,6 +97,7 @@ export default function App() {
               name="ManageScreen"
               component={ManageScreen}
               options={{
+                headerTitle: "Add Entries",
                 presentation: "modal"
               }}
             />

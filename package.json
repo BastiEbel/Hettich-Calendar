@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/webpack-config": "^19.0.0",
+    "@react-native-community/checkbox": "^0.5.17",
     "@react-native-community/datetimepicker": "7.2.0",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
@@ -25,7 +26,8 @@
     "react-native-calendars": "^1.1303.0",
     "react-native-date-picker": "^4.3.5",
     "react-native-dropdown-select-list": "^2.0.5",
-    "react-native-web": "~0.19.6"
+    "react-native-web": "~0.19.6",
+    "expo-checkbox": "~2.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

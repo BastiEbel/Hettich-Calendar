@@ -7,7 +7,7 @@ import { CalendarContext } from "../store/calendar-context";
 import { Entries } from "../models/entries";
 
 const INITIAL_DATE = Date();
-export default function CalendarComponent() {
+export default function CalendarComponent({ singleChecked, multiChecked }) {
   const entriesCTX = useContext(CalendarContext);
   const entries = new Entries();
   const [markedState, setMarkedState] = useState({
@@ -30,7 +30,7 @@ export default function CalendarComponent() {
         color: "#afdcfc",
         textColor: "#FFFFFF",
         selected: true,
-        selectedColor: "blue"
+        selectedColor: "#afdcfc"
       };
       setMarkedState({
         ...markedState,
@@ -39,7 +39,10 @@ export default function CalendarComponent() {
         startDate: day.dateString,
         markedType: ""
       });
-    } else {
+      if (singleChecked) {
+        addOneDayHandler(markedDates, day.dateString);
+      }
+    } else if (multiChecked) {
       let markedDates = markedState.markedDates;
       let startDate = moment(markedState.startDate);
       let endDate = moment(day.dateString);
@@ -54,7 +57,7 @@ export default function CalendarComponent() {
               color: "#afdcfc",
               textColor: "#FFFFFF",
               selected: true,
-              selectedColor: "blue"
+              selectedColor: "#afdcfc"
             };
           } else {
             markedDates[tempDate] = {
@@ -62,7 +65,7 @@ export default function CalendarComponent() {
               color: "#afdcfc",
               textColor: "#FFFFFF",
               selected: true,
-              selectedColor: "blue"
+              selectedColor: "#afdcfc"
             };
             lastSelectedDate = tempDate;
             entries.date = {
@@ -79,8 +82,6 @@ export default function CalendarComponent() {
           markedType: "period"
         });
         switchToNextScreen();
-      } else if (day.dateString === day.dateString) {
-        addOneDayHandler(markedDates, day);
       } else {
         alert("Select an upcomming date!");
       }
@@ -97,8 +98,8 @@ export default function CalendarComponent() {
       markedType: ""
     });
     entries.date = {
-      startDate: moment(markedState.startDate).format("DD-MM-YYYY"),
-      lastDate: moment(markedState.startDate).format("DD-MM-YYYY")
+      startDate: moment(day).format("DD-MM-YYYY"),
+      lastDate: moment(day).format("DD-MM-YYYY")
     };
     switchToNextScreen();
   }
