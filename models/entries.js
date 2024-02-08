@@ -5,7 +5,8 @@ export class Entries {
     definition = this.definition;
     date = {
       startDate: this.date?.startDate,
-      lastDate: this.date?.lastDate
+      lastDate: this.date?.lastDate,
+      time: this.date?.time
     };
     id = this.id;
   }

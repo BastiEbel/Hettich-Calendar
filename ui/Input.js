@@ -1,8 +1,6 @@
 import { TextInput, View, Text, StyleSheet } from "react-native";
 import IconButton from "../ui/IconButton";
 import { GlobalStyles } from "../constants/styles";
-import { useRef, useState } from "react";
-import { Entries } from "../models/entries";
 
 export default function Input({
   placeholder,
@@ -11,6 +9,7 @@ export default function Input({
   multiline,
   size,
   shown,
+  time,
   onPress,
   getValue
 }) {
@@ -56,6 +55,16 @@ export default function Input({
           <View style={styles.icon}>
             <IconButton
               icon="calendar"
+              color="white"
+              size={24}
+              onPress={onPress}
+            />
+          </View>
+        )}
+        {time && (
+          <View style={styles.icon}>
+            <IconButton
+              icon="alarm-outline"
               color="white"
               size={24}
               onPress={onPress}

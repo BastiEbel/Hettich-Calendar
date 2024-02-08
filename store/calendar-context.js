@@ -32,11 +32,6 @@ function CalendarContextProvider({ children }) {
 
   function getCalendarDate(date) {
     dispatch({ type: "SET", payload: date });
-    if (date.startDate === date.lastDate) {
-      setMultiSelected(false);
-    } else {
-      setMultiSelected(true);
-    }
   }
 
   const value = {

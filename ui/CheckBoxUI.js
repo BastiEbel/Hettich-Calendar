@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { View, Pressable, StyleSheet, Text } from "react-native";
 import Checkbox from "expo-checkbox";
 import { GlobalStyles } from "../constants/styles";
