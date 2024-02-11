@@ -14,7 +14,7 @@ const entries = new Entries({
   title: "",
   description: "",
   definition: "",
-  date: ""
+  date: { startDate: "", lastDate: "", time: "" }
 });
 
 export default function FormManagement({ onCancel }) {
@@ -22,14 +22,15 @@ export default function FormManagement({ onCancel }) {
   const [addDate, setAddDate] = useState(entriesCTX.entries);
   const [showDescription, setShowDescription] = useState(false);
   const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState(new Date().getTime());
+  const [time, setTime] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
   const [showTimer, setShowTimer] = useState(false);
 
   useEffect(() => {
     setAddDate(entriesCTX.entries);
 
-    setTime(moment(time).format("HH:mm"));
+    const newTime = new Date().getTime();
+    setTime(moment(newTime).format("HH:mm"));
   }, [entriesCTX]);
 
   function onToggleDatePicker() {
@@ -44,10 +45,13 @@ export default function FormManagement({ onCancel }) {
     onToggleDatePicker();
     if (type == "set") {
       const currentDate = date;
-      setDate(currentDate);
       const formattedDate = moment(currentDate).format("DD-MM-YYYY");
-      entries.date = { startDate: formattedDate, lastDate: formattedDate };
-      entriesCTX.getCalendarDate(entries.date);
+      setDate(currentDate);
+      entries.date = {
+        startDate: formattedDate,
+        lastDate: formattedDate,
+        time: time
+      };
       setShowPicker(false);
     }
   }
@@ -55,10 +59,11 @@ export default function FormManagement({ onCancel }) {
   function onTimeChange({ type }, date) {
     onToggleTimerPicker();
     if (type == "set") {
-      const currentDate = date;
-      setDate(currentDate);
-      console.log(currentDate);
-      //const formattedDate = moment(currentDate).format("DD-MM-YYYY");
+      const currentTime = date.getTime();
+      const formattedTime = moment(currentTime).format("HH:mm");
+      entries.date = { time: formattedTime };
+      setTime(formattedTime);
+      setShowTimer(false);
     }
   }
 
@@ -82,7 +87,7 @@ export default function FormManagement({ onCancel }) {
   }
 
   function onAddHandler() {
-    console.log(addDate, entries);
+    console.log(entries);
   }
 
   return (

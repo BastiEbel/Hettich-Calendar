@@ -3,7 +3,7 @@ import { createContext, useReducer, useState } from "react";
 export const CalendarContext = createContext({
   entries: {},
   multiDateSelected: false,
-  addCalendarEntry: ({ title, date, description }) => {},
+  addCalendarEntry: ({ title, date, description, definition }) => {},
   getCalendarDate: ({ date }) => {},
   getCalendarValue: (items) => {},
   updateCalendar: (id) => {},

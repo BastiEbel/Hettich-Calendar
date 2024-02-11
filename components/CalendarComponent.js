@@ -109,7 +109,7 @@ export default function CalendarComponent({ singleChecked, multiChecked }) {
       navigation.navigate("ManageScreen");
       entriesCTX.getCalendarDate(entries.date);
       resetMarketDates();
-    }, 2000);
+    }, 1000);
   }
 
   const resetMarketDates = () => {
