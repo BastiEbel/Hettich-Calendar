@@ -1,28 +1,27 @@
 import { useContext, useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import moment from "moment";
 
 import Input from "../ui/Input";
 import { GlobalStyles } from "../constants/styles";
 import { CalendarContext } from "../store/calendar-context";
 import Button from "../ui/Button";
-import { Entries } from "../models/entries";
 import AddDateTime from "./AddDateTime";
 import SelectBox from "./SelectBox";
-
-const entries = new Entries({
-  title: "",
-  description: "",
-  definition: "",
-  date: { startDate: "", lastDate: "", time: "" }
-});
 
 export default function FormManagement({ onCancel }) {
   const entriesCTX = useContext(CalendarContext);
   const [addDate, setAddDate] = useState(entriesCTX.entries);
   const [showDescription, setShowDescription] = useState(false);
-  const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState(new Date());
+  const [inputs, setInputs] = useState({
+    title: { value: "", titleIsValid: true },
+    description: { value: "", descriptionIsValid: true },
+    definition: { value: "", definitionIsValid: true },
+    date: {
+      dateValue: addDate,
+      timeValue: ""
+    }
+  });
   const [showPicker, setShowPicker] = useState(false);
   const [showTimer, setShowTimer] = useState(false);
 
@@ -30,7 +29,12 @@ export default function FormManagement({ onCancel }) {
     setAddDate(entriesCTX.entries);
 
     const newTime = new Date().getTime();
-    setTime(moment(newTime).format("HH:mm"));
+    setInputs((curInput) => {
+      return {
+        ...curInput,
+        date: { dateValue: addDate, timeValue: moment(newTime).format("HH:mm") }
+      };
+    });
   }, [entriesCTX]);
 
   function onToggleDatePicker() {
@@ -46,12 +50,9 @@ export default function FormManagement({ onCancel }) {
     if (type == "set") {
       const currentDate = date;
       const formattedDate = moment(currentDate).format("DD-MM-YYYY");
-      setDate(currentDate);
-      entries.date = {
-        startDate: formattedDate,
-        lastDate: formattedDate,
-        time: time
-      };
+      setInputs((curInput) => {
+        return { ...curInput, date: { dateValue: formattedDate } };
+      });
       setShowPicker(false);
     }
   }
@@ -61,8 +62,9 @@ export default function FormManagement({ onCancel }) {
     if (type == "set") {
       const currentTime = date.getTime();
       const formattedTime = moment(currentTime).format("HH:mm");
-      entries.date = { time: formattedTime };
-      setTime(formattedTime);
+      setInputs((curTime) => {
+        return { ...curTime, date: { timeValue: formattedTime } };
+      });
       setShowTimer(false);
     }
   }
@@ -73,28 +75,80 @@ export default function FormManagement({ onCancel }) {
     } else {
       setShowDescription(false);
     }
-    entries.definition = val;
+    setInputs((curDefinition) => {
+      return {
+        ...curDefinition,
+        definition: { value: val, definitionIsValid: true }
+      };
+    });
   }
 
   function onChangeTitleHandler(value) {
-    entries.title = value;
-    return entries.title;
+    setInputs((curTitle) => {
+      return { ...curTitle, title: { value: value, titleIsValid: true } };
+    });
   }
 
   function onChangeHandler(value) {
-    entries.description = value;
-    return entries.description;
+    setInputs((curDescription) => {
+      return {
+        ...curDescription,
+        description: { value: value, descriptionIsValid: true }
+      };
+    });
   }
 
   function onAddHandler() {
-    console.log(entries);
+    let descriptionIsValid = true;
+    const entriesData = {
+      title: inputs.title.value,
+      description: inputs.description.value,
+      definition: inputs.definition.value,
+      date: {
+        dateValue: inputs.date.dateValue,
+        timeValue: inputs.date.timeValue
+      }
+    };
+    const titleIsValid = entriesData.title.trim().length > 0;
+    if (showDescription) {
+      descriptionIsValid = entriesData.description.trim().length > 0;
+    }
+    const definitionIsValid = entriesData.definition.trim().length > 0;
+
+    if (!titleIsValid || !descriptionIsValid || !definitionIsValid) {
+      setInputs((curInputs) => {
+        return {
+          title: { value: curInputs.title.value, titleIsValid: titleIsValid },
+          description: {
+            value: curInputs.description.value,
+            descriptionIsValid: descriptionIsValid
+          },
+          definition: {
+            value: curInputs.definition.value,
+            definitionIsValid: definitionIsValid
+          },
+          date: {
+            dateValue: curInputs.date.dateValue,
+            timeValue: curInputs.date.timeValue
+          }
+        };
+      });
+      return;
+    }
+
+    console.log(entriesData);
   }
+
+  const formIsInvalid =
+    !inputs.title.titleIsValid ||
+    !inputs.description.descriptionIsValid ||
+    !inputs.definition.definitionIsValid;
 
   return (
     <View style={styles.container}>
       {showPicker && (
         <AddDateTime
-          value={date}
+          value={inputs.date.dateValue}
           display="spinner"
           mode="date"
           onDateChange={onDateChange}
@@ -102,7 +156,7 @@ export default function FormManagement({ onCancel }) {
       )}
       {showTimer && (
         <AddDateTime
-          value={date}
+          value={inputs.date.dateValue}
           display="spinner"
           mode="time"
           onDateChange={onTimeChange}
@@ -110,6 +164,7 @@ export default function FormManagement({ onCancel }) {
       )}
       <View style={styles.inputContainer}>
         <Input
+          validation={!inputs.title.titleIsValid}
           placeholder="Title"
           label="Title"
           size={40}
@@ -117,6 +172,7 @@ export default function FormManagement({ onCancel }) {
         />
         {showDescription && (
           <Input
+            validation={!inputs.description.descriptionIsValid}
             placeholder="Description"
             size={100}
             multiline
@@ -124,7 +180,10 @@ export default function FormManagement({ onCancel }) {
           />
         )}
         <View style={showDescription ? styles.selectContainer : null}>
-          <SelectBox selectedValue={setSelectedValue} />
+          <SelectBox
+            selectedValue={setSelectedValue}
+            validation={!inputs.definition.definitionIsValid}
+          />
         </View>
         <Input
           placeholder="DD-MM-YYYY"
@@ -139,10 +198,15 @@ export default function FormManagement({ onCancel }) {
             placeholder="HH:MM"
             label="Time"
             size={40}
-            value={time}
+            value={inputs.date.timeValue}
             time={true}
             onPress={onTimeChange}
           />
+        )}
+        {formIsInvalid && (
+          <Text style={styles.errorText}>
+            Invalid input values - please check your entered data!
+          </Text>
         )}
         <View style={styles.buttonContainer}>
           <Button onPress={onCancel} style={styles.styleButton} mode="flat">
@@ -183,5 +247,10 @@ const styles = StyleSheet.create({
   styleButton: {
     minWidth: 80,
     marginHorizontal: 16
+  },
+  errorText: {
+    textAlign: "center",
+    color: GlobalStyles.colors.error500,
+    margin: 8
   }
 });

@@ -11,7 +11,8 @@ export default function Input({
   shown,
   time,
   onPress,
-  getValue
+  getValue,
+  validation
 }) {
   const inputStyles = {
     justifyContent: "flex-start",
@@ -33,7 +34,11 @@ export default function Input({
       <View style={styles.container}>
         <TextInput
           placeholder={placeholder}
-          style={[inputStyles, { textAlignVertical: "top", paddingTop: 12 }]}
+          style={[
+            inputStyles,
+            { textAlignVertical: "top", paddingTop: 12 },
+            validation ? styles.valid : ""
+          ]}
           multiline={multiline}
           onChangeText={onChangeHandler}
         />
@@ -47,7 +52,7 @@ export default function Input({
       <View style={styles.dateContainer}>
         <TextInput
           placeholder={placeholder}
-          style={[inputStyles, styles.input]}
+          style={[inputStyles, styles.input, validation && styles.valid]}
           value={value}
           onChangeText={onChangeHandler}
         />
@@ -82,7 +87,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     marginVertical: 24
   },
-
   textLabel: {
     justifyContent: "flex-start",
     fontSize: 16,
@@ -107,5 +111,9 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1
+  },
+  valid: {
+    borderColor: GlobalStyles.colors.error500,
+    backgroundColor: GlobalStyles.colors.error50
   }
 });

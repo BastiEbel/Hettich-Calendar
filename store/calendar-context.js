@@ -21,6 +21,8 @@ function calendarReducer(state, action) {
         combineDate = `${date.startDate} - ${date.lastDate}`;
       }
       return combineDate;
+    case "ADD":
+      return;
     default:
       return state;
   }
@@ -32,12 +34,25 @@ function CalendarContextProvider({ children }) {
 
   function getCalendarDate(date) {
     dispatch({ type: "SET", payload: date });
+    if (date.startDate === date.lastDate) {
+      setMultiSelected(false);
+    } else {
+      setMultiSelected(true);
+    }
+  }
+
+  function addCalendarEntry({ title, description, definition, date }) {
+    dispatch({
+      type: "ADD",
+      payload: { title, description, definition, date }
+    });
   }
 
   const value = {
     entries: entriesState,
     multiDateSelected: multiSelected,
-    getCalendarDate: getCalendarDate
+    getCalendarDate: getCalendarDate,
+    addCalendarEntry: addCalendarEntry
   };
   return (
     <CalendarContext.Provider value={value}>
