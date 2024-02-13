@@ -251,6 +251,6 @@ const styles = StyleSheet.create({
   errorText: {
     textAlign: "center",
     color: GlobalStyles.colors.error500,
-    margin: 8
+    margin: 16
   }
 });

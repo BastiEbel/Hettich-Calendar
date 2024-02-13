@@ -1,12 +1,8 @@
-import { useContext } from "react";
 import { StyleSheet, View } from "react-native";
 import { GlobalStyles } from "../constants/styles";
-import { CalendarContext } from "../store/calendar-context";
 import FormManagement from "../components/FormManagement";
 
 export default function ManageScreen({ navigation }) {
-  const entriesCTX = useContext(CalendarContext);
-
   function cancelActionHandler() {
     navigation.goBack();
   }

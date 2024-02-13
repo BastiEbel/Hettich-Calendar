@@ -3,17 +3,19 @@ import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import { useContext } from "react";
 
 import { GlobalStyles } from "./constants/styles";
 import IconButton from "./ui/IconButton";
 import Home from "./screens/Home";
 import ManageScreen from "./screens/ManageScreen";
 import WeekScreen from "./screens/WeekScreen";
+import SettingScreen from "./screens/SettingScreen";
 import CalendarContextProvider, {
   CalendarContext
 } from "./store/calendar-context";
 import moment from "moment";
-import { useContext } from "react";
+
 import { Entries } from "./models/entries";
 
 const Stack = createNativeStackNavigator();
@@ -42,10 +44,10 @@ function ManageCalendarOverview() {
         tabBarActiveTintColor: GlobalStyles.colors.accent500,
         headerRight: ({ tintColor }) => (
           <IconButton
-            icon="add"
+            icon="menu-outline"
             size={24}
             color={tintColor}
-            onPress={addEntriesManagement}
+            onPress={() => navigation.navigate("SettingScreen")}
           />
         )
       })}
@@ -58,6 +60,22 @@ function ManageCalendarOverview() {
           tabBarLabel: "Home",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
+          )
+        }}
+      />
+      <BottomTabs.Screen
+        name="ManageScreen"
+        component={ManageScreen}
+        options={{
+          title: "Add Entries",
+          tabBarLabel: "Add Entries",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons
+              onPress={addEntriesManagement}
+              name="add-circle-outline"
+              size={size}
+              color={color}
+            />
           )
         }}
       />
@@ -94,10 +112,10 @@ export default function App() {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="ManageScreen"
-              component={ManageScreen}
+              name="SettingScreen"
+              component={SettingScreen}
               options={{
-                headerTitle: "Add Entries",
+                headerTitle: "Setting",
                 presentation: "modal"
               }}
             />

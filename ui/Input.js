@@ -1,6 +1,8 @@
 import { TextInput, View, Text, StyleSheet } from "react-native";
 import IconButton from "../ui/IconButton";
 import { GlobalStyles } from "../constants/styles";
+import { useContext } from "react";
+import { CalendarContext } from "../store/calendar-context";
 
 export default function Input({
   placeholder,
@@ -14,6 +16,7 @@ export default function Input({
   getValue,
   validation
 }) {
+  const entriesCTX = useContext(CalendarContext);
   const inputStyles = {
     justifyContent: "flex-start",
     alignItems: "flex-start",
@@ -56,7 +59,7 @@ export default function Input({
           value={value}
           onChangeText={onChangeHandler}
         />
-        {shown && (
+        {shown && !entriesCTX.multiDateSelected && (
           <View style={styles.icon}>
             <IconButton
               icon="calendar"

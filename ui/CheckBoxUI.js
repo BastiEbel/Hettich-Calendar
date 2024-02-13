@@ -18,9 +18,10 @@ function CheckBoxUI({ children, checked, onPress }) {
             width: 15,
             height: 15,
             backgroundColor: "white",
-            borderColor: GlobalStyles.colors.primary200,
+            borderColor: GlobalStyles.colors.primary50,
             borderRadius: 4
           }}
+          color={checked ? GlobalStyles.colors.primary600 : undefined}
           disabled={false}
           value={checked}
           onValueChange={checked}
