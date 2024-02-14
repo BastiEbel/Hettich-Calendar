@@ -4,7 +4,7 @@ export const CalendarContext = createContext({
   entries: {},
   multiDateSelected: false,
   addCalendarEntry: ({ title, date, description, definition }) => {},
-  getCalendarDate: ({ date }) => {},
+  getCalendarDate: ({ date, markedDates }) => {},
   getCalendarValue: (items) => {},
   updateCalendar: (id) => {},
   deleteCalendarEntry: (id) => {}

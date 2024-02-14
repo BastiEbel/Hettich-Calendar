@@ -14,21 +14,13 @@ export default function Home() {
       <View style={styles.checkBoxContainer}>
         <CheckBoxUI
           checked={multi}
-          onPress={
-            multi
-              ? () => setMulti(false)
-              : () => [setMulti(true), setSingle(false)]
-          }
+          onPress={!multi ? () => [setMulti(true), setSingle(false)] : null}
         >
           Select more days
         </CheckBoxUI>
         <CheckBoxUI
           checked={single}
-          onPress={
-            single
-              ? () => setSingle(false)
-              : () => [setSingle(true), setMulti(false)]
-          }
+          onPress={!single ? () => [setSingle(true), setMulti(false)] : null}
         >
           Select one day
         </CheckBoxUI>

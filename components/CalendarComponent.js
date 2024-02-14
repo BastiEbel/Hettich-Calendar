@@ -69,6 +69,7 @@ export default function CalendarComponent({ singleChecked, multiChecked }) {
             };
             lastSelectedDate = tempDate;
             entries.date = {
+              markedDates: markedDates,
               startDate: moment(markedState.startDate).format("DD-MM-YYYY"),
               lastDate: moment(tempDate).format("DD-MM-YYYY")
             };
@@ -98,6 +99,7 @@ export default function CalendarComponent({ singleChecked, multiChecked }) {
       markedType: ""
     });
     entries.date = {
+      markedDates: markedDates,
       startDate: moment(day).format("DD-MM-YYYY"),
       lastDate: moment(day).format("DD-MM-YYYY")
     };
@@ -107,7 +109,7 @@ export default function CalendarComponent({ singleChecked, multiChecked }) {
   function switchToNextScreen() {
     setTimeout(() => {
       navigation.navigate("ManageScreen");
-      entriesCTX.getCalendarDate(entries.date);
+      entriesCTX.getCalendarDate(entries.date, entries.markedDates);
       resetMarketDates();
     }, 1000);
   }

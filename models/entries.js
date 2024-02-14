@@ -4,6 +4,7 @@ export class Entries {
     description = this?.description;
     definition = this.definition;
     date = {
+      markedDates: this.markedDates,
       startDate: this.date?.startDate,
       lastDate: this.date?.lastDate,
       time: this.date?.time

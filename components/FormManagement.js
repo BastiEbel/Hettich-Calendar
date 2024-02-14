@@ -26,6 +26,7 @@ export default function FormManagement({ onCancel }) {
   const [showTimer, setShowTimer] = useState(false);
 
   useEffect(() => {
+    console.log(entriesCTX.entries);
     setAddDate(entriesCTX.entries);
 
     const newTime = new Date().getTime();
