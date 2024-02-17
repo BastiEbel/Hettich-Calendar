@@ -1,10 +1,11 @@
 export class Entries {
-  constructor(title, description, definition, date, id) {
+  constructor(title, description, definition, markedDates, date, id) {
     title = this.title;
     description = this?.description;
     definition = this.definition;
+    markedDates = this.markedDates;
     date = {
-      markedDates: this.markedDates,
+      dateValue: this.date?.dateValue,
       startDate: this.date?.startDate,
       lastDate: this.date?.lastDate,
       time: this.date?.time

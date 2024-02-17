@@ -44,6 +44,7 @@ export default function CalendarComponent({ singleChecked, multiChecked }) {
       }
     } else if (multiChecked) {
       let markedDates = markedState.markedDates;
+      let markedTempDate = [];
       let startDate = moment(markedState.startDate);
       let endDate = moment(day.dateString);
       let range = endDate.diff(startDate, "days");
@@ -52,6 +53,7 @@ export default function CalendarComponent({ singleChecked, multiChecked }) {
         for (let i = 1; i <= range; i++) {
           let tempDate = startDate.add(1, "day");
           tempDate = moment(tempDate).format("YYYY-MM-DD");
+          markedTempDate.push(tempDate);
           if (i < range) {
             markedDates[tempDate] = {
               color: "#afdcfc",
@@ -69,9 +71,9 @@ export default function CalendarComponent({ singleChecked, multiChecked }) {
             };
             lastSelectedDate = tempDate;
             entries.date = {
-              markedDates: markedDates,
+              markedDates: markedTempDate,
               startDate: moment(markedState.startDate).format("DD-MM-YYYY"),
-              lastDate: moment(tempDate).format("DD-MM-YYYY")
+              lastDate: moment(lastSelectedDate).format("DD-MM-YYYY")
             };
           }
         }
@@ -99,7 +101,6 @@ export default function CalendarComponent({ singleChecked, multiChecked }) {
       markedType: ""
     });
     entries.date = {
-      markedDates: markedDates,
       startDate: moment(day).format("DD-MM-YYYY"),
       lastDate: moment(day).format("DD-MM-YYYY")
     };
@@ -109,7 +110,7 @@ export default function CalendarComponent({ singleChecked, multiChecked }) {
   function switchToNextScreen() {
     setTimeout(() => {
       navigation.navigate("ManageScreen");
-      entriesCTX.getCalendarDate(entries.date, entries.markedDates);
+      entriesCTX.getCalendarDate(entries.date);
       resetMarketDates();
     }, 1000);
   }

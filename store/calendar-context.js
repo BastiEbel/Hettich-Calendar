@@ -1,9 +1,11 @@
 import { createContext, useReducer, useState } from "react";
+import { insertEntries } from "../util/database";
 
 export const CalendarContext = createContext({
   entries: {},
+  markedDates: {},
   multiDateSelected: false,
-  addCalendarEntry: ({ title, date, description, definition }) => {},
+  addCalendarEntry: ({ data }) => {},
   getCalendarDate: ({ date, markedDates }) => {},
   getCalendarValue: (items) => {},
   updateCalendar: (id) => {},
@@ -22,7 +24,9 @@ function calendarReducer(state, action) {
       }
       return combineDate;
     case "ADD":
-      return;
+      let inputData = action.payload;
+      console.log(inputData);
+      return insertEntries(inputData);
     default:
       return state;
   }
@@ -30,10 +34,12 @@ function calendarReducer(state, action) {
 
 function CalendarContextProvider({ children }) {
   const [multiSelected, setMultiSelected] = useState(false);
+  const [getMarkedDates, setGetMarkedDates] = useState();
   const [entriesState, dispatch] = useReducer(calendarReducer);
 
   function getCalendarDate(date) {
     dispatch({ type: "SET", payload: date });
+    setGetMarkedDates({ ...getMarkedDates, date });
     if (date.startDate === date.lastDate) {
       setMultiSelected(false);
     } else {
@@ -41,15 +47,16 @@ function CalendarContextProvider({ children }) {
     }
   }
 
-  function addCalendarEntry({ title, description, definition, date }) {
+  function addCalendarEntry(data) {
     dispatch({
       type: "ADD",
-      payload: { title, description, definition, date }
+      payload: { data }
     });
   }
 
   const value = {
     entries: entriesState,
+    markedDates: getMarkedDates,
     multiDateSelected: multiSelected,
     getCalendarDate: getCalendarDate,
     addCalendarEntry: addCalendarEntry

@@ -3,7 +3,7 @@ import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { GlobalStyles } from "./constants/styles";
 import IconButton from "./ui/IconButton";
@@ -15,7 +15,7 @@ import CalendarContextProvider, {
   CalendarContext
 } from "./store/calendar-context";
 import moment from "moment";
-
+import { init } from "./util/database";
 import { Entries } from "./models/entries";
 
 const Stack = createNativeStackNavigator();
@@ -23,9 +23,10 @@ const BottomTabs = createBottomTabNavigator();
 
 function ManageCalendarOverview() {
   const navigation = useNavigation();
+  const entriesCtx = useContext(CalendarContext);
   const getcurrentDate = new Date();
   const formattedDate = moment(getcurrentDate).format("DD-MM-YYYY");
-  const entriesCtx = useContext(CalendarContext);
+
   const entries = new Entries();
 
   function addEntriesManagement() {
@@ -95,6 +96,17 @@ function ManageCalendarOverview() {
 }
 
 export default function App() {
+  const [dbInitialized, setDbInitialized] = useState(false);
+
+  useEffect(() => {
+    init()
+      .then(() => {
+        setDbInitialized(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [dbInitialized]);
   return (
     <>
       <StatusBar style="light" />

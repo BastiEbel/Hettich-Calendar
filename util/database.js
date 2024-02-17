@@ -11,7 +11,10 @@ export function init() {
         id INTEGER PRIMARY KEY NOT NULL,
         title TEXT NOT NULL,
         description TEXT,
-        date TEXT NOT NULL,
+        definition TEXT NOT NULL,
+        markedDates TEXT NOT NULL,
+        dateValue TEXT NOT NULL,
+        time TEXT NOT NULL
     )`,
         [],
         () => {
@@ -26,16 +29,18 @@ export function init() {
   return promise;
 }
 
-export function insertPlace(entries) {
+export function insertEntries(entries) {
   const promise = new Promise((resolve, reject) => {
     database.transaction((tx) => {
       tx.executeSql(
-        `INSERT INTO places (title, description, startDate, lastDate), VALUES (?,?,?,?,?)`,
+        `INSERT INTO entries (title, description,definition, markedDates, time, startDate, lastDate), VALUES (?,?,?,?,?,?,?)`,
         [
           entries.title,
           entries.description,
-          entries.date.startDate,
-          entries.date.lastDate
+          entries.definition,
+          entries.markedDates,
+          entries.date.dateValue,
+          entries.date.time
         ],
         (_, result) => {
           resolve(result);
@@ -84,7 +89,7 @@ export function fetchEntries() {
   return promise;
 }
 
-export function fetchDetailPlace(id) {
+export function fetchDetailEntries(id) {
   const promise = new Promise((resolve, reject) => {
     database.transaction((tx) => {
       tx.executeSql(

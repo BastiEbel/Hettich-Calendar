@@ -8,8 +8,10 @@ import { CalendarContext } from "../store/calendar-context";
 import Button from "../ui/Button";
 import AddDateTime from "./AddDateTime";
 import SelectBox from "./SelectBox";
+import { useNavigation } from "@react-navigation/native";
 
 export default function FormManagement({ onCancel }) {
+  const navigation = useNavigation();
   const entriesCTX = useContext(CalendarContext);
   const [addDate, setAddDate] = useState(entriesCTX.entries);
   const [showDescription, setShowDescription] = useState(false);
@@ -26,7 +28,6 @@ export default function FormManagement({ onCancel }) {
   const [showTimer, setShowTimer] = useState(false);
 
   useEffect(() => {
-    console.log(entriesCTX.entries);
     setAddDate(entriesCTX.entries);
 
     const newTime = new Date().getTime();
@@ -99,22 +100,36 @@ export default function FormManagement({ onCancel }) {
     });
   }
 
+  function clearInputs() {
+    setInputs({
+      title: { value: "", titleIsValid: true },
+      description: { value: "", descriptionIsValid: true },
+      definition: { value: "", definitionIsValid: true },
+      date: {
+        dateValue: "",
+        timeValue: ""
+      }
+    });
+    navigation.navigate("WeekScreen");
+  }
+
   function onAddHandler() {
     let descriptionIsValid = true;
-    const entriesData = {
+    const entries = {
       title: inputs.title.value,
       description: inputs.description.value,
       definition: inputs.definition.value,
+      markedDates: JSON.stringify(entriesCTX.markedDates),
       date: {
         dateValue: inputs.date.dateValue,
         timeValue: inputs.date.timeValue
       }
     };
-    const titleIsValid = entriesData.title.trim().length > 0;
+    const titleIsValid = entries.title.trim().length > 0;
     if (showDescription) {
-      descriptionIsValid = entriesData.description.trim().length > 0;
+      descriptionIsValid = entries.description.trim().length > 0;
     }
-    const definitionIsValid = entriesData.definition.trim().length > 0;
+    const definitionIsValid = entries.definition.trim().length > 0;
 
     if (!titleIsValid || !descriptionIsValid || !definitionIsValid) {
       setInputs((curInputs) => {
@@ -136,8 +151,8 @@ export default function FormManagement({ onCancel }) {
       });
       return;
     }
-
-    console.log(entriesData);
+    entriesCTX.addCalendarEntry(entries);
+    clearInputs();
   }
 
   const formIsInvalid =
