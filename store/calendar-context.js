@@ -1,18 +1,16 @@
 import { createContext, useReducer, useState } from "react";
-import { insertEntries } from "../util/database";
 
 export const CalendarContext = createContext({
-  entries: {},
+  entries: "",
   markedDates: {},
   multiDateSelected: false,
-  addCalendarEntry: ({ data }) => {},
   getCalendarDate: ({ date, markedDates }) => {},
   getCalendarValue: (items) => {},
   updateCalendar: (id) => {},
   deleteCalendarEntry: (id) => {}
 });
 
-function calendarReducer(state, action) {
+async function calendarReducer(state, action) {
   switch (action.type) {
     case "SET":
       let date = action.payload;
@@ -23,10 +21,6 @@ function calendarReducer(state, action) {
         combineDate = `${date.startDate} - ${date.lastDate}`;
       }
       return combineDate;
-    case "ADD":
-      let inputData = action.payload;
-      console.log(inputData);
-      return insertEntries(inputData);
     default:
       return state;
   }
@@ -35,31 +29,28 @@ function calendarReducer(state, action) {
 function CalendarContextProvider({ children }) {
   const [multiSelected, setMultiSelected] = useState(false);
   const [getMarkedDates, setGetMarkedDates] = useState();
-  const [entriesState, dispatch] = useReducer(calendarReducer);
+  //const [entriesState, dispatch] = useReducer(calendarReducer);
+  const [entriesState, setEntriesState] = useState();
 
   function getCalendarDate(date) {
-    dispatch({ type: "SET", payload: date });
+    //dispatch({ type: "SET", payload: date });
+    let combineDate = "";
     setGetMarkedDates({ ...getMarkedDates, date });
     if (date.startDate === date.lastDate) {
+      combineDate = date.startDate;
       setMultiSelected(false);
     } else {
+      combineDate = `${date.startDate} - ${date.lastDate}`;
       setMultiSelected(true);
     }
-  }
-
-  function addCalendarEntry(data) {
-    dispatch({
-      type: "ADD",
-      payload: { data }
-    });
+    setEntriesState(combineDate);
   }
 
   const value = {
     entries: entriesState,
     markedDates: getMarkedDates,
     multiDateSelected: multiSelected,
-    getCalendarDate: getCalendarDate,
-    addCalendarEntry: addCalendarEntry
+    getCalendarDate: getCalendarDate
   };
   return (
     <CalendarContext.Provider value={value}>

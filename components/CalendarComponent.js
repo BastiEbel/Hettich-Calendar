@@ -49,6 +49,7 @@ export default function CalendarComponent({ singleChecked, multiChecked }) {
       let endDate = moment(day.dateString);
       let range = endDate.diff(startDate, "days");
       let lastSelectedDate = "";
+      markedTempDate.push(startDate.format("YYYY-MM-DD"));
       if (range > 0) {
         for (let i = 1; i <= range; i++) {
           let tempDate = startDate.add(1, "day");
@@ -101,6 +102,7 @@ export default function CalendarComponent({ singleChecked, multiChecked }) {
       markedType: ""
     });
     entries.date = {
+      markedDates: [moment(day).format("YYYY-MM-DD")],
       startDate: moment(day).format("DD-MM-YYYY"),
       lastDate: moment(day).format("DD-MM-YYYY")
     };

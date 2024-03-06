@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { useContext, useEffect, useState } from "react";
+import moment from "moment";
 
 import { GlobalStyles } from "./constants/styles";
 import IconButton from "./ui/IconButton";
@@ -14,7 +15,6 @@ import SettingScreen from "./screens/SettingScreen";
 import CalendarContextProvider, {
   CalendarContext
 } from "./store/calendar-context";
-import moment from "moment";
 import { init } from "./util/database";
 import { Entries } from "./models/entries";
 
@@ -97,7 +97,6 @@ function ManageCalendarOverview() {
 
 export default function App() {
   const [dbInitialized, setDbInitialized] = useState(false);
-
   useEffect(() => {
     init()
       .then(() => {
@@ -106,7 +105,8 @@ export default function App() {
       .catch((err) => {
         console.log(err);
       });
-  }, [dbInitialized]);
+  }, []);
+
   return (
     <>
       <StatusBar style="light" />

@@ -1,34 +1,39 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Agenda } from "react-native-calendars";
+import { fetchEntries } from "../util/database";
+import { GlobalStyles } from "../constants/styles";
+import ModalUI from "../ui/ModalUI";
+import ModalCalendarEntry from "./ModalCalendarEntry";
 
 export default function WeekCalendar() {
   const [weeklyState, setWeeklyState] = useState({});
+  const [openModal, setOpenModal] = useState(false);
+  const [showData, setShowData] = useState();
+  /* 
+  useEffect(() => {
+    renderItem;
+  }, [weeklyState]); */
 
-  const loadItems = (day) => {
+  async function loadItems() {
+    const loadedEntries = await fetchEntries();
     const items = weeklyState.items || {};
-
-    const timeToString = (time) => {
-      const date = new Date(time);
-      return date.toISOString().split("T")[0];
-    };
-
     setTimeout(() => {
-      for (let i = -15; i < 85; i++) {
-        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-        const strTime = timeToString(time);
+      for (let i = 0; i < loadedEntries.length; i++) {
+        const newEntry = loadedEntries[i];
+        const strTime = newEntry.markedDates;
 
         if (!items[strTime]) {
           items[strTime] = [];
 
-          const numItems = Math.floor(Math.random() * 3 + 1);
-          for (let j = 0; j < numItems; j++) {
-            items[strTime].push({
-              name: "Item for " + strTime + " #" + j,
-              height: Math.max(50, Math.floor(Math.random() * 100)),
-              day: strTime
-            });
-          }
+          items[strTime].push({
+            title: newEntry.title,
+            description: newEntry.description,
+            definition: newEntry.definition,
+            time: newEntry.time,
+            dateValue: newEntry.dateValue,
+            markedDates: newEntry.markedDates
+          });
         }
       }
 
@@ -39,14 +44,22 @@ export default function WeekCalendar() {
       setWeeklyState({
         items: newItems
       });
-    }, 1000);
-  };
+    }, 500);
+  }
 
-  const renderDay = (day) => {
+  /* const renderDay = (day) => {
     if (day) {
       return <Text style={styles.customDay}>{day.getDay()}</Text>;
     }
     return <View style={styles.dayItem} />;
+  }; */
+  const onToggleHandler = () => {
+    setOpenModal(!openModal);
+  };
+
+  const renderModal = (reservation) => {
+    setShowData(reservation);
+    onToggleHandler();
   };
 
   const renderItem = (reservation, isFirst) => {
@@ -56,9 +69,19 @@ export default function WeekCalendar() {
     return (
       <TouchableOpacity
         style={[styles.item, { height: reservation.height }]}
-        onPress={() => Alert.alert(reservation.name)}
+        onPress={() => renderModal(reservation)}
       >
-        <Text style={{ fontSize, color }}>{reservation.name}</Text>
+        <Text style={{ fontSize: 20, color, marginBottom: 16 }}>
+          {reservation.title}
+        </Text>
+        <Text style={{ fontSize, color, marginBottom: 8 }}>
+          {reservation.dateValue}
+        </Text>
+        <Text style={{ fontSize, color }}>{reservation.definition}</Text>
+
+        {reservation.setDescriptionVisible == 1 && (
+          <Text style={{ fontSize, color }}>{reservation.description}</Text>
+        )}
       </TouchableOpacity>
     );
   };
@@ -66,7 +89,7 @@ export default function WeekCalendar() {
   const renderEmptyDate = () => {
     return (
       <View style={styles.emptyDate}>
-        <Text>This is empty date!</Text>
+        <Text style={{ textAlign: "center" }}>This is empty date!</Text>
       </View>
     );
   };
@@ -74,17 +97,26 @@ export default function WeekCalendar() {
   const rowHasChanged = (r1, r2) => {
     return r1.name !== r2.name;
   };
-
   return (
-    <Agenda
-      items={weeklyState.items}
-      loadItemsForMonth={loadItems}
-      selected={Date()}
-      renderItem={renderItem}
-      renderEmptyDate={renderEmptyDate}
-      rowHasChanged={rowHasChanged}
-      showClosingKnob={true}
-    />
+    <>
+      <Agenda
+        items={weeklyState.items}
+        loadItemsForMonth={loadItems}
+        selected={Date()}
+        renderItem={renderItem}
+        renderEmptyData={renderEmptyDate}
+        reservationsKeyExtractor={(index) => index.id}
+        //rowHasChanged={rowHasChanged}
+        //showClosingKnob={true}
+        theme={{
+          backgroundColor: GlobalStyles.colors.primary200,
+          dayTextColor: "black"
+        }}
+      />
+      <ModalUI openModal={openModal}>
+        <ModalCalendarEntry reservation={showData} onClose={onToggleHandler} />
+      </ModalUI>
+    </>
   );
 }
 

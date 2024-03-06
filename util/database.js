@@ -13,6 +13,7 @@ export function init() {
         description TEXT,
         definition TEXT NOT NULL,
         markedDates TEXT NOT NULL,
+        setDescriptionVisible BOOLEAN,
         dateValue TEXT NOT NULL,
         time TEXT NOT NULL
     )`,
@@ -29,26 +30,48 @@ export function init() {
   return promise;
 }
 
-export function insertEntries(entries) {
+export function deleteTable() {
   const promise = new Promise((resolve, reject) => {
     database.transaction((tx) => {
       tx.executeSql(
-        `INSERT INTO entries (title, description,definition, markedDates, time, startDate, lastDate), VALUES (?,?,?,?,?,?,?)`,
-        [
-          entries.title,
-          entries.description,
-          entries.definition,
-          entries.markedDates,
-          entries.date.dateValue,
-          entries.date.time
-        ],
-        (_, result) => {
-          resolve(result);
+        `DROP TABLE entries`,
+        [],
+        () => {
+          resolve();
         },
         (_, error) => {
           reject(error);
         }
       );
+    });
+  });
+  return promise;
+}
+
+export function insertEntries(entries) {
+  const promise = new Promise((resolve, reject) => {
+    database.transaction((tx) => {
+      for (let i = 0; i < entries.markedDates.length; i++) {
+        const markedDate = entries.markedDates[i];
+        tx.executeSql(
+          `INSERT INTO entries (title, description, definition, markedDates,setDescriptionVisible, dateValue, time) VALUES (?,?,?,?,?,?,?)`,
+          [
+            entries.title,
+            entries.description,
+            entries.definition,
+            markedDate,
+            entries.setDescriptionVisible,
+            entries.date.dateValue,
+            entries.date.time
+          ],
+          (_, result) => {
+            resolve(result);
+          },
+          (_, error) => {
+            reject(error);
+          }
+        );
+      }
     });
   });
 
@@ -65,17 +88,7 @@ export function fetchEntries() {
           const entries = [];
 
           for (const dp of result.rows._array) {
-            entries.push(
-              new Entries(
-                dp.title,
-                dp.description,
-                {
-                  startDate: dp.startDate,
-                  lastDate: dp.lastDate
-                },
-                dp.id
-              )
-            );
+            entries.push(dp);
           }
           resolve(entries);
         },
@@ -99,12 +112,12 @@ export function fetchDetailEntries(id) {
           const dbEntries = result.rows._array[0];
           const entries = new Entries(
             dbEntries.title,
-            dbEntries.imageUri,
+            dbEntries.description,
             {
               startDate: dbEntries.startDate,
               lastDate: dbEntries.lastDate
             },
-            dbPLace.id
+            entries.id
           );
           resolve(entries);
         },

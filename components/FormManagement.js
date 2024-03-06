@@ -9,6 +9,7 @@ import Button from "../ui/Button";
 import AddDateTime from "./AddDateTime";
 import SelectBox from "./SelectBox";
 import { useNavigation } from "@react-navigation/native";
+import { deleteTable, insertEntries } from "../util/database";
 
 export default function FormManagement({ onCancel }) {
   const navigation = useNavigation();
@@ -19,9 +20,10 @@ export default function FormManagement({ onCancel }) {
     title: { value: "", titleIsValid: true },
     description: { value: "", descriptionIsValid: true },
     definition: { value: "", definitionIsValid: true },
+    setDescriptionVisible: false,
     date: {
-      dateValue: addDate,
-      timeValue: ""
+      dateValue: "",
+      time: ""
     }
   });
   const [showPicker, setShowPicker] = useState(false);
@@ -29,12 +31,14 @@ export default function FormManagement({ onCancel }) {
 
   useEffect(() => {
     setAddDate(entriesCTX.entries);
-
     const newTime = new Date().getTime();
     setInputs((curInput) => {
       return {
         ...curInput,
-        date: { dateValue: addDate, timeValue: moment(newTime).format("HH:mm") }
+        date: {
+          dateValue: entriesCTX.entries,
+          time: moment(newTime).format("HH:mm")
+        }
       };
     });
   }, [entriesCTX]);
@@ -65,7 +69,7 @@ export default function FormManagement({ onCancel }) {
       const currentTime = date.getTime();
       const formattedTime = moment(currentTime).format("HH:mm");
       setInputs((curTime) => {
-        return { ...curTime, date: { timeValue: formattedTime } };
+        return { ...curTime, date: { time: formattedTime } };
       });
       setShowTimer(false);
     }
@@ -91,38 +95,28 @@ export default function FormManagement({ onCancel }) {
     });
   }
 
-  function onChangeHandler(value) {
+  function onChangeDescriptionHandler(value) {
     setInputs((curDescription) => {
       return {
         ...curDescription,
-        description: { value: value, descriptionIsValid: true }
+        description: { value: value, descriptionIsValid: true },
+        setDescriptionVisible: true
       };
     });
   }
 
-  function clearInputs() {
-    setInputs({
-      title: { value: "", titleIsValid: true },
-      description: { value: "", descriptionIsValid: true },
-      definition: { value: "", definitionIsValid: true },
-      date: {
-        dateValue: "",
-        timeValue: ""
-      }
-    });
-    navigation.navigate("WeekScreen");
-  }
-
   function onAddHandler() {
     let descriptionIsValid = true;
+
     const entries = {
       title: inputs.title.value,
       description: inputs.description.value,
       definition: inputs.definition.value,
-      markedDates: JSON.stringify(entriesCTX.markedDates),
+      markedDates: entriesCTX.markedDates.date.markedDates,
+      setDescriptionVisible: inputs.setDescriptionVisible,
       date: {
         dateValue: inputs.date.dateValue,
-        timeValue: inputs.date.timeValue
+        time: inputs.date.time
       }
     };
     const titleIsValid = entries.title.trim().length > 0;
@@ -145,14 +139,30 @@ export default function FormManagement({ onCancel }) {
           },
           date: {
             dateValue: curInputs.date.dateValue,
-            timeValue: curInputs.date.timeValue
+            time: curInputs.date.time
           }
         };
       });
       return;
     }
-    entriesCTX.addCalendarEntry(entries);
+    //deleteTable();
+    insertEntries(entries);
+    entriesCTX.multiDateSelected = false;
     clearInputs();
+  }
+
+  function clearInputs() {
+    setInputs({
+      title: { value: "", titleIsValid: true },
+      description: { value: "", descriptionIsValid: true },
+      definition: { value: "", definitionIsValid: true },
+      setDescriptionVisible: false,
+      date: {
+        dateValue: "",
+        time: ""
+      }
+    });
+    navigation.navigate("WeekScreen");
   }
 
   const formIsInvalid =
@@ -192,7 +202,7 @@ export default function FormManagement({ onCancel }) {
             placeholder="Description"
             size={100}
             multiline
-            getValue={onChangeHandler}
+            getValue={onChangeDescriptionHandler}
           />
         )}
         <View style={showDescription ? styles.selectContainer : null}>
@@ -214,7 +224,7 @@ export default function FormManagement({ onCancel }) {
             placeholder="HH:MM"
             label="Time"
             size={40}
-            value={inputs.date.timeValue}
+            value={inputs.date.time}
             time={true}
             onPress={onTimeChange}
           />
