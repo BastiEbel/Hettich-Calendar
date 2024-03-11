@@ -1,35 +1,37 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 import Button from "../ui/Button";
-function ModalCalendarEntry({ reservation, onClose }) {
+import { CalendarContext } from "../store/calendar-context";
+
+function ModalCalendarEntry({ onClose }) {
+  const entriesCTX = useContext(CalendarContext);
+  const [getItems, setGetItems] = useState(entriesCTX.entries);
+
   return (
     <View style={styles.bodyContainer}>
-      <Text style={{ fontSize: 16, fontWeight: "bold", marginHorizontal: 16 }}>
-        Title:<Text style={styles.textOutput}> {reservation.title}</Text>
+      <Text style={styles.textName}>
+        Title:
+        <Text style={styles.textOutput}> {getItems.title} </Text>
       </Text>
-      {reservation.setDescriptionVisible === 1 && (
-        <Text
-          style={{ fontSize: 16, fontWeight: "bold", marginHorizontal: 16 }}
-        >
+      {getItems.setDescriptionVisible === 1 && (
+        <Text style={styles.textName}>
           Description:
-          <Text style={styles.textOutput}>{reservation.description}</Text>
+          <Text style={styles.textOutput}>{getItems.description}</Text>
         </Text>
       )}
-      <Text style={{ fontSize: 16, fontWeight: "bold", marginHorizontal: 16 }}>
+      <Text style={styles.textName}>
         Selected Option:
-        <Text style={styles.textOutput}>{reservation.definition}</Text>
+        <Text style={styles.textOutput}>{getItems.definition}</Text>
       </Text>
-      <Text style={{ fontSize: 16, fontWeight: "bold", marginHorizontal: 16 }}>
+      <Text style={styles.textName}>
         Selected Date:
-        <Text style={styles.textOutput}>{reservation.dateValue}</Text>
+        <Text style={styles.textOutput}>{getItems.dateValue}</Text>
       </Text>
-      {reservation.setDescriptionVisible === 1 && (
-        <Text
-          style={{ fontSize: 16, fontWeight: "bold", marginHorizontal: 16 }}
-        >
+      {getItems.setDescriptionVisible === 1 && (
+        <Text style={styles.textName}>
           Selected Time:
-          <Text style={styles.textOutput}>{reservation.time}</Text>
+          <Text style={styles.textOutput}> {getItems.time}</Text>
         </Text>
       )}
       <View>
@@ -48,7 +50,13 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     width: "90%",
     minHeight: 600,
-    justifyContent: "space-evenly"
+    justifyContent: "center"
+  },
+  textName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginHorizontal: 16,
+    marginVertical: 8
   },
   textOutput: {
     fontSize: 18,

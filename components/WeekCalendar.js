@@ -1,26 +1,28 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Alert, StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { Agenda } from "react-native-calendars";
-import { fetchEntries } from "../util/database";
+import { Agenda, CalendarProvider } from "react-native-calendars";
+import { fetchEntries, init } from "../util/database";
 import { GlobalStyles } from "../constants/styles";
 import ModalUI from "../ui/ModalUI";
 import ModalCalendarEntry from "./ModalCalendarEntry";
+import { CalendarContext } from "../store/calendar-context";
 
+const INITIAL_DATE = new Date();
 export default function WeekCalendar() {
   const [weeklyState, setWeeklyState] = useState({});
   const [openModal, setOpenModal] = useState(false);
-  const [showData, setShowData] = useState();
-  /* 
-  useEffect(() => {
-    renderItem;
-  }, [weeklyState]); */
+  const entriesCTX = useContext(CalendarContext);
+
+  /*  useEffect(() => {
+    init();
+    loadItems();
+  }, [loadItems]); */
 
   async function loadItems() {
     const loadedEntries = await fetchEntries();
     const items = weeklyState.items || {};
     setTimeout(() => {
-      for (let i = 0; i < loadedEntries.length; i++) {
-        const newEntry = loadedEntries[i];
+      for (const newEntry of loadedEntries) {
         const strTime = newEntry.markedDates;
 
         if (!items[strTime]) {
@@ -32,7 +34,9 @@ export default function WeekCalendar() {
             definition: newEntry.definition,
             time: newEntry.time,
             dateValue: newEntry.dateValue,
-            markedDates: newEntry.markedDates
+            markedDates: newEntry.markedDates,
+            id: newEntry.id,
+            setDescriptionVisible: newEntry.setDescriptionVisible
           });
         }
       }
@@ -41,24 +45,16 @@ export default function WeekCalendar() {
       Object.keys(items).forEach((key) => {
         newItems[key] = items[key];
       });
-      setWeeklyState({
-        items: newItems
-      });
-    }, 500);
+      setWeeklyState({ ...weeklyState, items: newItems });
+    }, 100);
   }
 
-  /* const renderDay = (day) => {
-    if (day) {
-      return <Text style={styles.customDay}>{day.getDay()}</Text>;
-    }
-    return <View style={styles.dayItem} />;
-  }; */
   const onToggleHandler = () => {
-    setOpenModal(!openModal);
+    setOpenModal((prevModal) => !prevModal);
   };
 
   const renderModal = (reservation) => {
-    setShowData(reservation);
+    entriesCTX.getCalendarValue(reservation);
     onToggleHandler();
   };
 
@@ -95,28 +91,29 @@ export default function WeekCalendar() {
   };
 
   const rowHasChanged = (r1, r2) => {
-    return r1.name !== r2.name;
+    return r1.markedDates !== r2.markedDates;
   };
   return (
-    <>
+    <CalendarProvider date={Date()}>
       <Agenda
         items={weeklyState.items}
         loadItemsForMonth={loadItems}
-        selected={Date()}
+        selected={INITIAL_DATE}
         renderItem={renderItem}
         renderEmptyData={renderEmptyDate}
-        reservationsKeyExtractor={(index) => index.id}
-        //rowHasChanged={rowHasChanged}
-        //showClosingKnob={true}
+        rowHasChanged={rowHasChanged}
+        showClosingKnob={true}
+        pastScrollRange={(new Date().getFullYear() - 1900) * 12}
+        futureScrollRange={(2099 - new Date().getFullYear()) * 12}
         theme={{
           backgroundColor: GlobalStyles.colors.primary200,
           dayTextColor: "black"
         }}
       />
       <ModalUI openModal={openModal}>
-        <ModalCalendarEntry reservation={showData} onClose={onToggleHandler} />
+        <ModalCalendarEntry onClose={onToggleHandler} />
       </ModalUI>
-    </>
+    </CalendarProvider>
   );
 }
 

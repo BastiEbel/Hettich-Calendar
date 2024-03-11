@@ -96,15 +96,8 @@ function ManageCalendarOverview() {
 }
 
 export default function App() {
-  const [dbInitialized, setDbInitialized] = useState(false);
   useEffect(() => {
-    init()
-      .then(() => {
-        setDbInitialized(true);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    init();
   }, []);
 
   return (

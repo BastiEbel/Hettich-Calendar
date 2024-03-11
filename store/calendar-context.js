@@ -10,7 +10,7 @@ export const CalendarContext = createContext({
   deleteCalendarEntry: (id) => {}
 });
 
-async function calendarReducer(state, action) {
+function calendarReducer(state, action) {
   switch (action.type) {
     case "SET":
       let date = action.payload;
@@ -21,6 +21,9 @@ async function calendarReducer(state, action) {
         combineDate = `${date.startDate} - ${date.lastDate}`;
       }
       return combineDate;
+    case "GET":
+      let selectedValue = action.payload;
+      return selectedValue;
     default:
       return state;
   }
@@ -29,28 +32,33 @@ async function calendarReducer(state, action) {
 function CalendarContextProvider({ children }) {
   const [multiSelected, setMultiSelected] = useState(false);
   const [getMarkedDates, setGetMarkedDates] = useState();
-  //const [entriesState, dispatch] = useReducer(calendarReducer);
-  const [entriesState, setEntriesState] = useState();
+  const [entriesState, dispatch] = useReducer(calendarReducer);
+  //const [entriesState, setEntriesState] = useState();
 
   function getCalendarDate(date) {
-    //dispatch({ type: "SET", payload: date });
-    let combineDate = "";
+    dispatch({ type: "SET", payload: date });
+    // let combineDate = "";
     setGetMarkedDates({ ...getMarkedDates, date });
     if (date.startDate === date.lastDate) {
-      combineDate = date.startDate;
+      //combineDate = date.startDate;
       setMultiSelected(false);
     } else {
-      combineDate = `${date.startDate} - ${date.lastDate}`;
+      //combineDate = `${date.startDate} - ${date.lastDate}`;
       setMultiSelected(true);
     }
-    setEntriesState(combineDate);
+    //setEntriesState(combineDate);
+  }
+
+  function getCalendarValue(reservation) {
+    dispatch({ type: "GET", payload: reservation });
   }
 
   const value = {
     entries: entriesState,
     markedDates: getMarkedDates,
     multiDateSelected: multiSelected,
-    getCalendarDate: getCalendarDate
+    getCalendarDate: getCalendarDate,
+    getCalendarValue: getCalendarValue
   };
   return (
     <CalendarContext.Provider value={value}>

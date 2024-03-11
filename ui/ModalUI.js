@@ -1,10 +1,19 @@
-import { View, Modal, Text, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import Modal from "react-native-modal";
 import { GlobalStyles } from "../constants/styles";
 
 function ModalUI({ openModal, children }) {
   return (
-    <Modal visible={openModal} animationType="slide" transparent={true}>
-      <View style={styles.container}>{children}</View>
+    <Modal
+      style={styles.container}
+      isVisible={openModal}
+      animationIn="slideInUp"
+      transparent={true}
+      useNativeDriver={true}
+      animationInTiming={250}
+      animationOutTiming={250}
+    >
+      {children}
     </Modal>
   );
 }
@@ -15,6 +24,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: GlobalStyles.colors.primary50,
     flex: 1,
+    margin: 0,
     justifyContent: "center",
     alignItems: "center"
   }
