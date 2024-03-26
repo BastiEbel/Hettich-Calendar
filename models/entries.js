@@ -5,7 +5,7 @@ export class Entries {
     definition,
     markedDates,
     date,
-    setDescriptionVisible,
+    isDescriptionVisible,
     id
   ) {
     title = this.title;
@@ -18,7 +18,7 @@ export class Entries {
       lastDate: this.date?.lastDate,
       time: this.date?.time
     };
-    setDescriptionVisible = this.setDescriptionVisible;
+    isDescriptionVisible = this.isDescriptionVisible;
     id = this.id;
   }
 }

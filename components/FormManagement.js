@@ -17,10 +17,10 @@ export default function FormManagement({ onCancel }) {
   const [addDate, setAddDate] = useState(entriesCTX.entries);
   const [showDescription, setShowDescription] = useState(false);
   const [inputs, setInputs] = useState({
-    title: { value: "", titleIsValid: true },
-    description: { value: "", descriptionIsValid: true },
-    definition: { value: "", definitionIsValid: true },
-    setDescriptionVisible: false,
+    title: { value: "", isValid: true },
+    description: { value: "", isValid: true },
+    definition: { value: "", isValid: true },
+    isDescriptionVisible: false,
     date: {
       dateValue: "",
       time: ""
@@ -30,18 +30,18 @@ export default function FormManagement({ onCancel }) {
   const [showTimer, setShowTimer] = useState(false);
 
   useEffect(() => {
-    setAddDate(entriesCTX.entries);
-    const newTime = new Date().getTime();
-    setInputs((curInput) => {
-      return {
+    if (entriesCTX.entries !== addDate) {
+      setAddDate(entriesCTX.entries);
+      const newTime = new Date().getTime();
+      setInputs((curInput) => ({
         ...curInput,
         date: {
           dateValue: entriesCTX.entries,
           time: moment(newTime).format("HH:mm")
         }
-      };
-    });
-  }, [entriesCTX]);
+      }));
+    }
+  }, [entriesCTX, addDate]);
 
   function onToggleDatePicker() {
     setShowPicker(!showPicker);
@@ -68,11 +68,28 @@ export default function FormManagement({ onCancel }) {
     if (type == "set") {
       const currentTime = date.getTime();
       const formattedTime = moment(currentTime).format("HH:mm");
-      setInputs((curTime) => {
-        return { ...curTime, date: { time: formattedTime } };
+      setInputs((curInput) => {
+        return { ...curInput, date: { time: formattedTime } };
       });
       setShowTimer(false);
     }
+  }
+
+  const { title, description, definition, date } = inputs;
+
+  function onChangeTitleHandler(value) {
+    setInputs((curInputs) => ({
+      ...curInputs,
+      title: { value: value, isValid: true }
+    }));
+  }
+
+  function onChangeDescriptionHandler(value) {
+    setInputs((curInputs) => ({
+      ...curInputs,
+      description: { value: value, isValid: true },
+      isDescriptionVisible: true
+    }));
   }
 
   function setSelectedValue(val) {
@@ -81,42 +98,24 @@ export default function FormManagement({ onCancel }) {
     } else {
       setShowDescription(false);
     }
-    setInputs((curDefinition) => {
-      return {
-        ...curDefinition,
-        definition: { value: val, definitionIsValid: true }
-      };
-    });
-  }
-
-  function onChangeTitleHandler(value) {
-    setInputs((curTitle) => {
-      return { ...curTitle, title: { value: value, titleIsValid: true } };
-    });
-  }
-
-  function onChangeDescriptionHandler(value) {
-    setInputs((curDescription) => {
-      return {
-        ...curDescription,
-        description: { value: value, descriptionIsValid: true },
-        setDescriptionVisible: true
-      };
-    });
+    setInputs((curInputs) => ({
+      ...curInputs,
+      definition: { value: val, isValid: true }
+    }));
   }
 
   function onAddHandler() {
     let descriptionIsValid = true;
 
     const entries = {
-      title: inputs.title.value,
-      description: inputs.description.value,
-      definition: inputs.definition.value,
+      title: title.value,
+      description: description.value,
+      definition: definition.value,
       markedDates: entriesCTX.markedDates.date.markedDates,
-      setDescriptionVisible: inputs.setDescriptionVisible,
+      isDescriptionVisible: inputs.isDescriptionVisible,
       date: {
-        dateValue: inputs.date.dateValue,
-        time: inputs.date.time
+        dateValue: date.dateValue,
+        time: date.time
       }
     };
     const titleIsValid = entries.title.trim().length > 0;
@@ -126,55 +125,54 @@ export default function FormManagement({ onCancel }) {
     const definitionIsValid = entries.definition.trim().length > 0;
 
     if (!titleIsValid || !descriptionIsValid || !definitionIsValid) {
-      setInputs((curInputs) => {
-        return {
-          title: { value: curInputs.title.value, titleIsValid: titleIsValid },
-          description: {
-            value: curInputs.description.value,
-            descriptionIsValid: descriptionIsValid
-          },
-          definition: {
-            value: curInputs.definition.value,
-            definitionIsValid: definitionIsValid
-          },
-          date: {
-            dateValue: curInputs.date.dateValue,
-            time: curInputs.date.time
-          }
-        };
-      });
+      setInputs((curInputs) => ({
+        ...curInputs,
+        title: { value: curInputs.title.value, isValid: titleIsValid },
+        description: {
+          value: curInputs.description.value,
+          isValid: descriptionIsValid
+        },
+        definition: {
+          value: curInputs.definition.value,
+          isValid: definitionIsValid
+        },
+        date: {
+          dateValue: curInputs.date.dateValue,
+          time: curInputs.date.time
+        }
+      }));
       return;
     }
     //deleteTable();
     insertEntries(entries);
-    entriesCTX.multiDateSelected = false;
+
     clearInputs();
   }
 
   function clearInputs() {
     setInputs({
-      title: { value: "", titleIsValid: true },
-      description: { value: "", descriptionIsValid: true },
-      definition: { value: "", definitionIsValid: true },
-      setDescriptionVisible: false,
+      title: { value: "", isValid: true },
+      description: { value: "", isValid: true },
+      definition: { value: "", isValid: true },
+      isDescriptionVisible: false,
       date: {
         dateValue: "",
         time: ""
       }
     });
+
     navigation.navigate("WeekScreen");
+    return (entriesCTX.multiDateSelected = false);
   }
 
   const formIsInvalid =
-    !inputs.title.titleIsValid ||
-    !inputs.description.descriptionIsValid ||
-    !inputs.definition.definitionIsValid;
+    !title.isValid || !description.isValid || !definition.isValid;
 
   return (
     <View style={styles.container}>
       {showPicker && (
         <AddDateTime
-          value={inputs.date.dateValue}
+          value={date.dateValue}
           display="spinner"
           mode="date"
           onDateChange={onDateChange}
@@ -182,7 +180,7 @@ export default function FormManagement({ onCancel }) {
       )}
       {showTimer && (
         <AddDateTime
-          value={inputs.date.dateValue}
+          value={date.dateValue}
           display="spinner"
           mode="time"
           onDateChange={onTimeChange}
@@ -190,7 +188,7 @@ export default function FormManagement({ onCancel }) {
       )}
       <View style={styles.inputContainer}>
         <Input
-          validation={!inputs.title.titleIsValid}
+          validation={!title.isValid}
           placeholder="Title"
           label="Title"
           size={40}
@@ -198,7 +196,7 @@ export default function FormManagement({ onCancel }) {
         />
         {showDescription && (
           <Input
-            validation={!inputs.description.descriptionIsValid}
+            validation={!description.isValid}
             placeholder="Description"
             size={100}
             multiline
@@ -208,7 +206,7 @@ export default function FormManagement({ onCancel }) {
         <View style={showDescription ? styles.selectContainer : null}>
           <SelectBox
             selectedValue={setSelectedValue}
-            validation={!inputs.definition.definitionIsValid}
+            validation={!definition.isValid}
           />
         </View>
         <Input
@@ -224,7 +222,7 @@ export default function FormManagement({ onCancel }) {
             placeholder="HH:MM"
             label="Time"
             size={40}
-            value={inputs.date.time}
+            value={date.time}
             time={true}
             onPress={onTimeChange}
           />

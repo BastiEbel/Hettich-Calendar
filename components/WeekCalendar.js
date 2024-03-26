@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { useContext, useState } from "react";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Agenda, CalendarProvider } from "react-native-calendars";
-import { fetchEntries, init } from "../util/database";
+import { fetchEntries } from "../util/database";
 import { GlobalStyles } from "../constants/styles";
 import ModalUI from "../ui/ModalUI";
 import ModalCalendarEntry from "./ModalCalendarEntry";
@@ -36,7 +36,7 @@ export default function WeekCalendar() {
             dateValue: newEntry.dateValue,
             markedDates: newEntry.markedDates,
             id: newEntry.id,
-            setDescriptionVisible: newEntry.setDescriptionVisible
+            isDescriptionVisible: newEntry.isDescriptionVisible
           });
         }
       }
@@ -75,7 +75,7 @@ export default function WeekCalendar() {
         </Text>
         <Text style={{ fontSize, color }}>{reservation.definition}</Text>
 
-        {reservation.setDescriptionVisible == 1 && (
+        {reservation.isDescriptionVisible == 1 && (
           <Text style={{ fontSize, color }}>{reservation.description}</Text>
         )}
       </TouchableOpacity>
@@ -94,7 +94,7 @@ export default function WeekCalendar() {
     return r1.markedDates !== r2.markedDates;
   };
   return (
-    <CalendarProvider date={Date()}>
+    <CalendarProvider date={INITIAL_DATE}>
       <Agenda
         items={weeklyState.items}
         loadItemsForMonth={loadItems}

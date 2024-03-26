@@ -13,7 +13,7 @@ export function init() {
         description TEXT,
         definition TEXT NOT NULL,
         markedDates TEXT NOT NULL,
-        setDescriptionVisible BOOLEAN,
+        isDescriptionVisible BOOLEAN,
         dateValue TEXT NOT NULL,
         time TEXT NOT NULL
     )`,
@@ -54,13 +54,13 @@ export function insertEntries(entries) {
       for (let i = 0; i < entries.markedDates.length; i++) {
         const markedDate = entries.markedDates[i];
         tx.executeSql(
-          `INSERT INTO entries (title, description, definition, markedDates,setDescriptionVisible, dateValue, time) VALUES (?,?,?,?,?,?,?)`,
+          `INSERT INTO entries (title, description, definition, markedDates, isDescriptionVisible, dateValue, time) VALUES (?,?,?,?,?,?,?)`,
           [
             entries.title,
             entries.description,
             entries.definition,
             markedDate,
-            entries.setDescriptionVisible,
+            entries.isDescriptionVisible,
             entries.date.dateValue,
             entries.date.time
           ],

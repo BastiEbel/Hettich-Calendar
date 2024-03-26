@@ -12,7 +12,7 @@ export const CalendarContext = createContext({
 
 function calendarReducer(state, action) {
   switch (action.type) {
-    case "SET":
+    case "SETDATE":
       let date = action.payload;
       let combineDate = "";
       if (date.startDate === date.lastDate) {
@@ -36,7 +36,7 @@ function CalendarContextProvider({ children }) {
   //const [entriesState, setEntriesState] = useState();
 
   function getCalendarDate(date) {
-    dispatch({ type: "SET", payload: date });
+    dispatch({ type: "SETDATE", payload: date });
     // let combineDate = "";
     setGetMarkedDates({ ...getMarkedDates, date });
     if (date.startDate === date.lastDate) {
