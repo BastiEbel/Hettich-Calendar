@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useCallback } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Agenda, CalendarProvider } from "react-native-calendars";
 import { fetchEntries } from "../util/database";
@@ -13,52 +13,39 @@ export default function WeekCalendar() {
   const [openModal, setOpenModal] = useState(false);
   const entriesCTX = useContext(CalendarContext);
 
-  /*  useEffect(() => {
-    init();
-    loadItems();
-  }, [loadItems]); */
-
-  async function loadItems() {
+  const loadItems = useCallback(async () => {
     const loadedEntries = await fetchEntries();
-    const items = weeklyState.items || {};
-    setTimeout(() => {
+    setWeeklyState((prevWeeklyState) => {
+      const items = prevWeeklyState.items || {};
+      const newItems = { ...items };
+
       for (const newEntry of loadedEntries) {
         const strTime = newEntry.markedDates;
 
-        if (!items[strTime]) {
-          items[strTime] = [];
-
-          items[strTime].push({
-            title: newEntry.title,
-            description: newEntry.description,
-            definition: newEntry.definition,
-            time: newEntry.time,
-            dateValue: newEntry.dateValue,
-            markedDates: newEntry.markedDates,
-            id: newEntry.id,
-            isDescriptionVisible: newEntry.isDescriptionVisible
-          });
+        if (!newItems[strTime]) {
+          newItems[strTime] = [];
         }
+
+        newItems[strTime].push(newEntry);
       }
 
-      const newItems = {};
-      Object.keys(items).forEach((key) => {
-        newItems[key] = items[key];
-      });
-      setWeeklyState({ ...weeklyState, items: newItems });
-    }, 100);
-  }
+      return { ...prevWeeklyState, items: newItems };
+    });
+  }, []);
 
-  const onToggleHandler = () => {
+  const onToggleHandler = useCallback(() => {
     setOpenModal((prevModal) => !prevModal);
-  };
+  }, []);
 
-  const renderModal = (reservation) => {
-    entriesCTX.getCalendarValue(reservation);
-    onToggleHandler();
-  };
+  const renderModal = useCallback(
+    (reservation) => {
+      entriesCTX.getCalendarValue(reservation);
+      onToggleHandler();
+    },
+    [entriesCTX, onToggleHandler]
+  );
 
-  const renderItem = (reservation, isFirst) => {
+  const renderItem = useCallback((reservation, isFirst) => {
     const fontSize = isFirst ? 12 : 10;
     const color = isFirst ? "black" : "#43515c";
 
@@ -80,7 +67,7 @@ export default function WeekCalendar() {
         )}
       </TouchableOpacity>
     );
-  };
+  });
 
   const renderEmptyDate = () => {
     return (
