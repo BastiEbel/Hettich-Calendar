@@ -5,6 +5,7 @@ export const CalendarContext = createContext({
   markedDates: {},
   multiDateSelected: false,
   getCalendarDate: ({ date, markedDates }) => {},
+  clearSelectedDates: () => {},
   getCalendarValue: (items) => {},
   updateCalendar: (id) => {},
   deleteCalendarEntry: (id) => {}
@@ -49,6 +50,10 @@ function CalendarContextProvider({ children }) {
     //setEntriesState(combineDate);
   }
 
+  function clearSelectedDates() {
+    setMultiSelected(false);
+  }
+
   function getCalendarValue(reservation) {
     dispatch({ type: "GET", payload: reservation });
   }
@@ -58,6 +63,7 @@ function CalendarContextProvider({ children }) {
     markedDates: getMarkedDates,
     multiDateSelected: multiSelected,
     getCalendarDate: getCalendarDate,
+    clearSelectedDates: clearSelectedDates,
     getCalendarValue: getCalendarValue
   };
   return (

@@ -145,12 +145,12 @@ export default function FormManagement({ onCancel }) {
     }
     //deleteTable();
     insertEntries(entries);
-
     clearInputs();
   }
 
   function clearInputs() {
-    setInputs({
+    setInputs((curInputs) => ({
+      ...curInputs,
       title: { value: "", isValid: true },
       description: { value: "", isValid: true },
       definition: { value: "", isValid: true },
@@ -159,10 +159,9 @@ export default function FormManagement({ onCancel }) {
         dateValue: "",
         time: ""
       }
-    });
-
+    }));
+    entriesCTX.clearSelectedDates();
     navigation.navigate("WeekScreen");
-    return (entriesCTX.multiDateSelected = false);
   }
 
   const formIsInvalid =

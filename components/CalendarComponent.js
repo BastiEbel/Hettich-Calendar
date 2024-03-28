@@ -5,6 +5,7 @@ import moment from "moment";
 import { useNavigation } from "@react-navigation/native";
 import { CalendarContext } from "../store/calendar-context";
 import { Entries } from "../models/entries";
+import ErrorOverlay from "../ui/ErrorOverlay";
 
 const INITIAL_DATE = Date();
 export default function CalendarComponent({ singleChecked, multiChecked }) {
@@ -43,11 +44,11 @@ export default function CalendarComponent({ singleChecked, multiChecked }) {
         addOneDayHandler(markedDates, day.dateString);
       }
     } else if (multiChecked) {
-      let markedDates = markedState.markedDates;
-      let markedTempDate = [];
-      let startDate = moment(markedState.startDate);
-      let endDate = moment(day.dateString);
-      let range = endDate.diff(startDate, "days");
+      const markedDates = markedState.markedDates;
+      const markedTempDate = [];
+      const startDate = moment(markedState.startDate);
+      const endDate = moment(day.dateString);
+      const range = endDate.diff(startDate, "days");
       let lastSelectedDate = "";
       markedTempDate.push(startDate.format("YYYY-MM-DD"));
       if (range > 0) {

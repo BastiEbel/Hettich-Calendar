@@ -26,6 +26,28 @@ function SelectBox({ selectedValue, validation }) {
     selectedValue(selected);
   }, [entriesCTX.multiDateSelected, selected]);
 
+  const boxStyles = {
+    width: 300,
+    borderColor: validation
+      ? GlobalStyles.colors.error500
+      : GlobalStyles.colors.primary700,
+    backgroundColor: validation ? GlobalStyles.colors.error50 : "white",
+    marginTop: 32
+  };
+
+  const dropdownStyles = {
+    width: "100%",
+    backgroundColor: GlobalStyles.colors.primary100,
+    justifyContent: "center",
+    borderColor: GlobalStyles.colors.primary700,
+    backgroundColor: "white"
+  };
+
+  const dropdownTextStyles = {
+    color: GlobalStyles.colors.gray500,
+    fontSize: 12
+  };
+
   return (
     <View>
       <SelectList
@@ -34,27 +56,9 @@ function SelectBox({ selectedValue, validation }) {
         setSelected={(val) => setSelected(val)}
         data={data}
         save="value"
-        boxStyles={{
-          width: 300,
-          borderColor: [
-            validation
-              ? GlobalStyles.colors.error500
-              : GlobalStyles.colors.primary700
-          ],
-          backgroundColor: validation ? GlobalStyles.colors.error50 : "white",
-          marginTop: 32
-        }}
-        dropdownStyles={{
-          width: "100%",
-          backgroundColor: GlobalStyles.colors.primary100,
-          justifyContent: "center",
-          borderColor: GlobalStyles.colors.primary700,
-          backgroundColor: "white"
-        }}
-        dropdownTextStyles={{
-          color: GlobalStyles.colors.gray500,
-          fontSize: 12
-        }}
+        boxStyles={boxStyles}
+        dropdownStyles={dropdownStyles}
+        dropdownTextStyles={dropdownTextStyles}
       />
     </View>
   );

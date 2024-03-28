@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import { GlobalStyles } from "../../constants/styles";
+import { GlobalStyles } from "../constants/styles";
 import Button from "./Button";
 
 function ErrorOverlay({ message, onConfirm }) {
@@ -20,15 +20,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 24,
-    backgroundColor: GlobalStyles.colors.primary700,
+    backgroundColor: GlobalStyles.colors.primary700
   },
   text: {
     color: "white",
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: 8
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
-  },
+    fontWeight: "bold"
+  }
 });
