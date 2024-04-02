@@ -11,8 +11,9 @@ import SelectBox from "./SelectBox";
 import { deleteTable, insertEntries } from "../util/database";
 
 export default function FormManagement({ onCancel, onSubmit }) {
-  const entriesCTX = useContext(CalendarContext);
-  const [addDate, setAddDate] = useState(entriesCTX.entries);
+  const { entries, markedDates, clearSelectedDates } =
+    useContext(CalendarContext);
+  const [addDate, setAddDate] = useState(entries);
   const [showDescription, setShowDescription] = useState(false);
   const [inputs, setInputs] = useState({
     title: { value: "", isValid: true },
@@ -28,18 +29,18 @@ export default function FormManagement({ onCancel, onSubmit }) {
   const [showTimer, setShowTimer] = useState(false);
 
   useEffect(() => {
-    if (entriesCTX.entries !== addDate) {
-      setAddDate(entriesCTX.entries);
+    if (entries !== addDate) {
+      setAddDate(entries);
       const newTime = new Date().getTime();
       setInputs((curInput) => ({
         ...curInput,
         date: {
-          dateValue: entriesCTX.entries,
+          dateValue: entries,
           time: moment(newTime).format("HH:mm")
         }
       }));
     }
-  }, [entriesCTX, addDate]);
+  }, [entries, addDate]);
 
   function onToggleDatePicker() {
     setShowPicker(!showPicker);
@@ -109,7 +110,7 @@ export default function FormManagement({ onCancel, onSubmit }) {
       title: title.value,
       description: description.value,
       definition: definition.value,
-      markedDates: entriesCTX.markedDates.date.markedDates,
+      markedDates: markedDates.date.markedDates,
       isDescriptionVisible: inputs.isDescriptionVisible,
       date: {
         dateValue: date.dateValue,
@@ -146,6 +147,11 @@ export default function FormManagement({ onCancel, onSubmit }) {
     clearInputs();
   }
 
+  function onCancelHandler() {
+    clearInputs();
+    onCancel();
+  }
+
   function clearInputs() {
     setInputs((curInputs) => ({
       ...curInputs,
@@ -158,7 +164,7 @@ export default function FormManagement({ onCancel, onSubmit }) {
         time: ""
       }
     }));
-    entriesCTX.clearSelectedDates();
+    clearSelectedDates();
     onSubmit();
   }
 
@@ -232,7 +238,11 @@ export default function FormManagement({ onCancel, onSubmit }) {
           </Text>
         )}
         <View style={styles.buttonContainer}>
-          <Button onPress={onCancel} style={styles.styleButton} mode="flat">
+          <Button
+            onPress={onCancelHandler}
+            style={styles.styleButton}
+            mode="flat"
+          >
             Cancel
           </Button>
           <Button onPress={onAddHandler} style={styles.styleButton}>

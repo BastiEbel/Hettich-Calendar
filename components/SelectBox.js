@@ -14,17 +14,17 @@ const data = [
 function SelectBox({ selectedValue, validation }) {
   const [selected, setSelected] = useState("");
   const [changePlaceholder, setChangePlaceholder] = useState("");
-  const entriesCTX = useContext(CalendarContext);
+  const { multiDateSelected } = useContext(CalendarContext);
 
   useEffect(() => {
-    if (entriesCTX.multiDateSelected) {
+    if (multiDateSelected && selected !== undefined) {
       setChangePlaceholder("Vacation");
       setSelected(data[0].value);
     } else {
       setChangePlaceholder("Select Option");
     }
     selectedValue(selected);
-  }, [entriesCTX.multiDateSelected, selected]);
+  }, [multiDateSelected, selected]);
 
   const boxStyles = {
     width: 300,

@@ -5,8 +5,8 @@ import Button from "../ui/Button";
 import { CalendarContext } from "../store/calendar-context";
 
 function ModalCalendarEntry({ onClose }) {
-  const entriesCTX = useContext(CalendarContext);
-  const [getItems, setGetItems] = useState(entriesCTX.entries);
+  const { entries } = useContext(CalendarContext);
+  const [getItems, setGetItems] = useState(entries);
 
   return (
     <View style={styles.bodyContainer}>
@@ -14,7 +14,7 @@ function ModalCalendarEntry({ onClose }) {
         Title:
         <Text style={styles.textOutput}> {getItems.title} </Text>
       </Text>
-      {getItems.setDescriptionVisible === 1 && (
+      {getItems.isDescriptionVisible === 1 && (
         <Text style={styles.textName}>
           Description:
           <Text style={styles.textOutput}>{getItems.description}</Text>
@@ -28,7 +28,7 @@ function ModalCalendarEntry({ onClose }) {
         Selected Date:
         <Text style={styles.textOutput}>{getItems.dateValue}</Text>
       </Text>
-      {getItems.setDescriptionVisible === 1 && (
+      {getItems.isDescriptionVisible === 1 && (
         <Text style={styles.textName}>
           Selected Time:
           <Text style={styles.textOutput}> {getItems.time}</Text>
