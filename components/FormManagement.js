@@ -8,11 +8,9 @@ import { CalendarContext } from "../store/calendar-context";
 import Button from "../ui/Button";
 import AddDateTime from "./AddDateTime";
 import SelectBox from "./SelectBox";
-import { useNavigation } from "@react-navigation/native";
 import { deleteTable, insertEntries } from "../util/database";
 
-export default function FormManagement({ onCancel }) {
-  const navigation = useNavigation();
+export default function FormManagement({ onCancel, onSubmit }) {
   const entriesCTX = useContext(CalendarContext);
   const [addDate, setAddDate] = useState(entriesCTX.entries);
   const [showDescription, setShowDescription] = useState(false);
@@ -161,7 +159,7 @@ export default function FormManagement({ onCancel }) {
       }
     }));
     entriesCTX.clearSelectedDates();
-    navigation.navigate("WeekScreen");
+    onSubmit();
   }
 
   const formIsInvalid =
@@ -188,6 +186,7 @@ export default function FormManagement({ onCancel }) {
       <View style={styles.inputContainer}>
         <Input
           validation={!title.isValid}
+          value={title.value}
           placeholder="Title"
           label="Title"
           size={40}
@@ -196,6 +195,7 @@ export default function FormManagement({ onCancel }) {
         {showDescription && (
           <Input
             validation={!description.isValid}
+            value={description.value}
             placeholder="Description"
             size={100}
             multiline

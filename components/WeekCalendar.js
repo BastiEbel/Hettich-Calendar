@@ -17,7 +17,7 @@ export default function WeekCalendar() {
     const loadedEntries = await fetchEntries();
     setWeeklyState((prevWeeklyState) => {
       const items = prevWeeklyState.items || {};
-      const newItems = { ...items };
+      const newItems = { items };
 
       for (const newEntry of loadedEntries) {
         const strTime = newEntry.markedDates;

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import CalendarComponent from "../components/CalendarComponent";
@@ -9,28 +9,27 @@ import { CalendarContext } from "../store/calendar-context";
 export default function Home() {
   const [single, setSingle] = useState(true);
   const [multi, setMulti] = useState(false);
-  const entriesCTX = useContext(CalendarContext);
+  const { multiDateSelected } = useContext(CalendarContext);
+
+  useEffect(() => {
+    if (!multiDateSelected) {
+      setSingle(true);
+      setMulti(false);
+    }
+  }, [multiDateSelected]);
 
   return (
     <View style={styles.container}>
       <View style={styles.checkBoxContainer}>
         <CheckBoxUI
           checked={multi}
-          onPress={
-            entriesCTX.multiDateSelected
-              ? () => [setMulti(true), setSingle(false)]
-              : null
-          }
+          onPress={!multi ? () => [setMulti(true), setSingle(false)] : null}
         >
           Select more days
         </CheckBoxUI>
         <CheckBoxUI
           checked={single}
-          onPress={
-            !entriesCTX.multiDateSelected
-              ? () => [setSingle(true), setMulti(false)]
-              : null
-          }
+          onPress={!single ? () => [setSingle(true), setMulti(false)] : null}
         >
           Select one day
         </CheckBoxUI>

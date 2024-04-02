@@ -7,9 +7,16 @@ export default function ManageScreen({ navigation }) {
     navigation.goBack();
   }
 
+  function onSubmitHandler() {
+    navigation.navigate("WeekScreen");
+  }
+
   return (
     <View style={styles.container}>
-      <FormManagement onCancel={cancelActionHandler} />
+      <FormManagement
+        onCancel={cancelActionHandler}
+        onSubmit={onSubmitHandler}
+      />
     </View>
   );
 }

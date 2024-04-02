@@ -52,6 +52,7 @@ function SelectBox({ selectedValue, validation }) {
     <View>
       <SelectList
         placeholder={changePlaceholder}
+        value={selected}
         search={false}
         setSelected={(val) => setSelected(val)}
         data={data}

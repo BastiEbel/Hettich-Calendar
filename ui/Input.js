@@ -37,6 +37,7 @@ export default function Input({
       <View style={styles.container}>
         <TextInput
           placeholder={placeholder}
+          value={value}
           style={[
             inputStyles,
             { textAlignVertical: "top", paddingTop: 12 },
