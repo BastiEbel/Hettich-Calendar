@@ -11,7 +11,7 @@ const INITIAL_DATE = new Date();
 export default function WeekCalendar() {
   const [weeklyState, setWeeklyState] = useState({});
   const [openModal, setOpenModal] = useState(false);
-  const entriesCTX = useContext(CalendarContext);
+  const { getCalendarValue } = useContext(CalendarContext);
 
   const loadItems = useCallback(async () => {
     const loadedEntries = await fetchEntries();
@@ -33,17 +33,9 @@ export default function WeekCalendar() {
     });
   }, []);
 
-  const onToggleHandler = useCallback(() => {
+  const onToggleHandler = () => {
     setOpenModal((prevModal) => !prevModal);
-  }, []);
-
-  const renderModal = useCallback(
-    (reservation) => {
-      entriesCTX.getCalendarValue(reservation);
-      onToggleHandler();
-    },
-    [entriesCTX, onToggleHandler]
-  );
+  };
 
   const renderItem = useCallback((reservation, isFirst) => {
     const fontSize = isFirst ? 12 : 10;
@@ -67,7 +59,12 @@ export default function WeekCalendar() {
         )}
       </TouchableOpacity>
     );
-  });
+  }, []);
+
+  const renderModal = (reservation) => {
+    onToggleHandler();
+    getCalendarValue(reservation);
+  };
 
   const renderEmptyDate = () => {
     return (

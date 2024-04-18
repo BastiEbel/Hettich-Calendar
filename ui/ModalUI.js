@@ -22,7 +22,7 @@ export default ModalUI;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: GlobalStyles.colors.primary50,
+    backgroundColor: "transparent",
     flex: 1,
     margin: 0,
     justifyContent: "center",

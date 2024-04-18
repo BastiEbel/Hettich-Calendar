@@ -16,11 +16,12 @@ export default ErrorOverlay;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    //flex: 1,
+    width: "100%",
     justifyContent: "center",
     alignItems: "center",
     padding: 24,
-    backgroundColor: GlobalStyles.colors.primary700
+    backgroundColor: GlobalStyles.colors.error300
   },
   text: {
     color: "white",

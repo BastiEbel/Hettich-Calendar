@@ -10,6 +10,7 @@ export const GlobalStyles = {
     primary800: "#000acd",
     accent500: "#f7bc0c",
     error50: "#fcc4e4",
+    error300: "#d62e47",
     error500: "#9b095c",
     gray500: "#6c6c6c",
     gray700: "#221c30"

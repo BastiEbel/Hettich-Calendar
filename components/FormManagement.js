@@ -11,9 +11,9 @@ import SelectBox from "./SelectBox";
 import { deleteTable, insertEntries } from "../util/database";
 
 export default function FormManagement({ onCancel, onSubmit }) {
-  const { entries, markedDates, clearSelectedDates } =
+  const { entries, setDate, markedDates, clearSelectedDates } =
     useContext(CalendarContext);
-  const [addDate, setAddDate] = useState(entries);
+  const [addDate, setAddDate] = useState(setDate);
   const [showDescription, setShowDescription] = useState(false);
   const [inputs, setInputs] = useState({
     title: { value: "", isValid: true },
@@ -29,18 +29,18 @@ export default function FormManagement({ onCancel, onSubmit }) {
   const [showTimer, setShowTimer] = useState(false);
 
   useEffect(() => {
-    if (entries !== addDate) {
-      setAddDate(entries);
+    if (setDate !== addDate) {
+      setAddDate(setDate);
       const newTime = new Date().getTime();
       setInputs((curInput) => ({
         ...curInput,
         date: {
-          dateValue: entries,
+          dateValue: setDate,
           time: moment(newTime).format("HH:mm")
         }
       }));
     }
-  }, [entries, addDate]);
+  }, [setDate, addDate]);
 
   function onToggleDatePicker() {
     setShowPicker(!showPicker);
@@ -84,11 +84,13 @@ export default function FormManagement({ onCancel, onSubmit }) {
   }
 
   function onChangeDescriptionHandler(value) {
-    setInputs((curInputs) => ({
-      ...curInputs,
-      description: { value: value, isValid: true },
-      isDescriptionVisible: true
-    }));
+    if (showDescription) {
+      setInputs((curInputs) => ({
+        ...curInputs,
+        description: { value: value, isValid: true },
+        isDescriptionVisible: true
+      }));
+    }
   }
 
   function setSelectedValue(val) {

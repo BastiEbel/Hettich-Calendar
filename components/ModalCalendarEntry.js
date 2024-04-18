@@ -1,12 +1,29 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 import Button from "../ui/Button";
 import { CalendarContext } from "../store/calendar-context";
+import { fetchEntries } from "../util/database";
 
 function ModalCalendarEntry({ onClose }) {
   const { entries } = useContext(CalendarContext);
   const [getItems, setGetItems] = useState(entries);
+
+  useEffect(() => {
+    loadAllItems();
+  }, []);
+
+  async function loadAllItems() {
+    const getLoadedItems = await fetchEntries();
+    let listOfDates = [];
+    getLoadedItems.map((dateValue) => {
+      if (dateValue.dateValue === getItems.dateValue) {
+        listOfDates.push(dateValue);
+      }
+    });
+
+    console.log(listOfDates);
+  }
 
   return (
     <View style={styles.bodyContainer}>

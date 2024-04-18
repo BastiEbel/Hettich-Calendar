@@ -1,8 +1,9 @@
 import { createContext, useReducer, useState } from "react";
 
 export const CalendarContext = createContext({
-  entries: "",
+  entries: {},
   markedDates: {},
+  setDate: "",
   multiDateSelected: false,
   getCalendarDate: ({ date, markedDates }) => {},
   clearSelectedDates: () => {},
@@ -13,7 +14,7 @@ export const CalendarContext = createContext({
 
 function calendarReducer(state, action) {
   switch (action.type) {
-    case "SETDATE":
+    /* case "SETDATE":
       let date = action.payload;
       let combineDate = "";
       if (date.startDate === date.lastDate) {
@@ -21,7 +22,7 @@ function calendarReducer(state, action) {
       } else {
         combineDate = `${date.startDate} - ${date.lastDate}`;
       }
-      return combineDate;
+      return combineDate; */
     case "GET":
       let selectedValue = action.payload;
       return selectedValue;
@@ -34,20 +35,20 @@ function CalendarContextProvider({ children }) {
   const [multiSelected, setMultiSelected] = useState(false);
   const [getMarkedDates, setGetMarkedDates] = useState();
   const [entriesState, dispatch] = useReducer(calendarReducer);
-  //const [entriesState, setEntriesState] = useState();
+  const [dateState, setDateState] = useState();
 
   function getCalendarDate(date) {
-    dispatch({ type: "SETDATE", payload: date });
-    // let combineDate = "";
+    //dispatch({ type: "SETDATE", payload: date });
+    let combineDate = "";
     setGetMarkedDates({ ...getMarkedDates, date });
     if (date.startDate === date.lastDate) {
-      //combineDate = date.startDate;
+      combineDate = date.startDate;
       setMultiSelected(false);
     } else {
-      //combineDate = `${date.startDate} - ${date.lastDate}`;
+      combineDate = `${date.startDate} - ${date.lastDate}`;
       setMultiSelected(true);
     }
-    //setEntriesState(combineDate);
+    setDateState(combineDate);
   }
 
   function clearSelectedDates() {
@@ -61,6 +62,7 @@ function CalendarContextProvider({ children }) {
   const value = {
     entries: entriesState,
     markedDates: getMarkedDates,
+    setDate: dateState,
     multiDateSelected: multiSelected,
     getCalendarDate: getCalendarDate,
     clearSelectedDates: clearSelectedDates,
