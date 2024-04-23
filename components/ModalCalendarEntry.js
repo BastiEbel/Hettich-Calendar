@@ -3,6 +3,10 @@ import { View, Text, StyleSheet } from "react-native";
 
 import Button from "../ui/Button";
 import { CalendarContext } from "../store/calendar-context";
+import { GlobalStyles } from "../constants/styles";
+import Input from "../ui/Input";
+import AddDateTime from "./AddDateTime";
+import SelectBox from "./SelectBox";
 import { fetchEntries } from "../util/database";
 
 function ModalCalendarEntry({ onClose }) {
@@ -22,39 +26,85 @@ function ModalCalendarEntry({ onClose }) {
       }
     });
 
-    console.log(listOfDates);
+    //console.log(listOfDates);
+  }
+
+  function selectedValue(value) {
+    setGetItems((curItem) => ({ ...curItem, definition: value }));
   }
 
   return (
     <View style={styles.bodyContainer}>
-      <Text style={styles.textName}>
-        Title:
-        <Text style={styles.textOutput}> {getItems.title} </Text>
-      </Text>
-      {getItems.isDescriptionVisible === 1 && (
-        <Text style={styles.textName}>
-          Description:
-          <Text style={styles.textOutput}>{getItems.description}</Text>
-        </Text>
+      {/* {showPicker && (
+        <AddDateTime
+          value={date.dateValue}
+          display="spinner"
+          mode="date"
+          onDateChange={onDateChange}
+        />
       )}
-      <Text style={styles.textName}>
-        Selected Option:
-        <Text style={styles.textOutput}>{getItems.definition}</Text>
-      </Text>
-      <Text style={styles.textName}>
-        Selected Date:
-        <Text style={styles.textOutput}>{getItems.dateValue}</Text>
-      </Text>
-      {getItems.isDescriptionVisible === 1 && (
-        <Text style={styles.textName}>
-          Selected Time:
-          <Text style={styles.textOutput}> {getItems.time}</Text>
-        </Text>
-      )}
-      <View>
-        <Button style={styles.styleButton} onPress={onClose}>
-          Close
-        </Button>
+      {showTimer && (
+        <AddDateTime
+          value={date.dateValue}
+          display="spinner"
+          mode="time"
+          onDateChange={onTimeChange}
+        />
+      )} */}
+      <View style={styles.inputContainer}>
+        <Input
+          //validation={!title.isValid}
+          value={getItems.title}
+          placeholder="Title"
+          label="Title"
+          size={40}
+          //getValue={onChangeTitleHandler}
+        />
+        {/* {showDescription && (
+          <Input
+            validation={!description.isValid}
+            value={description.value}
+            placeholder="Description"
+            size={100}
+            multiline
+            getValue={onChangeDescriptionHandler}
+          />
+        )} */}
+        <View /*style={showDescription ? styles.selectContainer : null}*/>
+          <SelectBox
+            selectedValue={(val) => selectedValue(val)}
+            getValue={getItems.definition}
+            //validation={!definition.isValid}
+          />
+        </View>
+        <Input
+          placeholder="DD-MM-YYYY"
+          label="Date"
+          size={40}
+          value={getItems.dateValue}
+          shown={true}
+        />
+        {/* {showDescription && (
+          <Input
+            placeholder="HH:MM"
+            label="Time"
+            size={40}
+            value={date.time}
+            time={true}
+            onPress={onTimeChange}
+          />
+        )} */}
+        {/* {formIsInvalid && (
+          <Text style={styles.errorText}>
+            Invalid input values - please check your entered data!
+          </Text>
+        )} */}
+        <View style={styles.buttonContainer}>
+          <Button onPress={onClose} style={styles.styleButton} mode="flat">
+            Cancel
+          </Button>
+          <Button style={styles.styleButton}>Edit</Button>
+        </View>
       </View>
     </View>
   );
@@ -64,25 +114,35 @@ export default ModalCalendarEntry;
 
 const styles = StyleSheet.create({
   bodyContainer: {
-    backgroundColor: "white",
+    backgroundColor: GlobalStyles.colors.primary100,
     width: "90%",
     minHeight: 600,
-    justifyContent: "center"
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8
   },
-  textName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginHorizontal: 16,
-    marginVertical: 8
+  inputContainer: {
+    width: 300,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 24
   },
-  textOutput: {
-    fontSize: 18,
-    fontWeight: "normal",
-    marginLeft: 16
+  selectContainer: {
+    marginTop: 60
+  },
+  buttonContainer: {
+    marginVertical: 48,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center"
   },
   styleButton: {
-    marginVertical: 32,
-    marginHorizontal: 16,
-    minWidth: 80
+    minWidth: 80,
+    marginHorizontal: 16
+  },
+  errorText: {
+    textAlign: "center",
+    color: GlobalStyles.colors.error500,
+    margin: 16
   }
 });

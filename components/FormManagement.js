@@ -212,6 +212,7 @@ export default function FormManagement({ onCancel, onSubmit }) {
         )}
         <View style={showDescription ? styles.selectContainer : null}>
           <SelectBox
+            getValue=""
             selectedValue={setSelectedValue}
             validation={!definition.isValid}
           />

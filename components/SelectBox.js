@@ -11,20 +11,20 @@ const data = [
   { key: "3", value: "Date" }
 ];
 
-function SelectBox({ selectedValue, validation }) {
-  const [selected, setSelected] = useState("");
-  const [changePlaceholder, setChangePlaceholder] = useState("");
+function SelectBox({ selectedValue, validation, getValue }) {
+  const [selected, setSelected] = useState(getValue);
+  const [changePlaceholder, setChangePlaceholder] = useState(getValue);
   const { multiDateSelected } = useContext(CalendarContext);
 
   useEffect(() => {
-    if (multiDateSelected && selected !== undefined) {
+    if (multiDateSelected) {
       setChangePlaceholder("Vacation");
       setSelected(data[0].value);
-    } else {
+    } else if (getValue === "") {
       setChangePlaceholder("Select Option");
     }
     selectedValue(selected);
-  }, [multiDateSelected, selected]);
+  }, [multiDateSelected]);
 
   const boxStyles = {
     width: 300,

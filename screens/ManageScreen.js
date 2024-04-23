@@ -1,9 +1,13 @@
 import { StyleSheet, View } from "react-native";
 import { GlobalStyles } from "../constants/styles";
 import FormManagement from "../components/FormManagement";
+import { useContext } from "react";
+import { CalendarContext } from "../store/calendar-context";
 
 export default function ManageScreen({ navigation }) {
+  const { clearSelectedDates } = useContext(CalendarContext);
   function cancelActionHandler() {
+    clearSelectedDates();
     navigation.goBack();
   }
 
