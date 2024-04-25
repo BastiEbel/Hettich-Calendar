@@ -8,7 +8,7 @@ const data = [
   { key: "0", value: "Vacation" },
   { key: "1", value: "Task" },
   { key: "2", value: "Reminder" },
-  { key: "3", value: "Date" }
+  { key: "3", value: "Date" },
 ];
 
 function SelectBox({ selectedValue, validation, getValue, disabled }) {
@@ -20,11 +20,11 @@ function SelectBox({ selectedValue, validation, getValue, disabled }) {
     if (multiDateSelected) {
       setChangePlaceholder("Vacation");
       setSelected(data[0].value);
-    } else if (getValue === "") {
+    } else if (getValue === undefined) {
       setChangePlaceholder("Select Option");
     }
     selectedValue(selected);
-  }, [multiDateSelected]);
+  }, [multiDateSelected, selected]);
 
   const boxStyles = {
     width: 300,
@@ -32,7 +32,7 @@ function SelectBox({ selectedValue, validation, getValue, disabled }) {
       ? GlobalStyles.colors.error500
       : GlobalStyles.colors.primary700,
     backgroundColor: validation ? GlobalStyles.colors.error50 : "white",
-    marginTop: 32
+    marginTop: 32,
   };
 
   const dropdownStyles = {
@@ -40,12 +40,12 @@ function SelectBox({ selectedValue, validation, getValue, disabled }) {
     backgroundColor: GlobalStyles.colors.primary100,
     justifyContent: "center",
     borderColor: GlobalStyles.colors.primary700,
-    backgroundColor: "white"
+    backgroundColor: "white",
   };
 
   const dropdownTextStyles = {
     color: GlobalStyles.colors.gray500,
-    fontSize: 12
+    fontSize: 12,
   };
 
   return (
@@ -69,10 +69,10 @@ export default SelectBox;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 16
+    marginTop: 16,
   },
   valid: {
     borderColor: GlobalStyles.colors.error500,
-    backgroundColor: GlobalStyles.colors.error50
-  }
+    backgroundColor: GlobalStyles.colors.error50,
+  },
 });
