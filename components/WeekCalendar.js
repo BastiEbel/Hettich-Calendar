@@ -25,7 +25,6 @@ export default function WeekCalendar() {
         if (!newItems[strTime]) {
           newItems[strTime] = [];
         }
-
         newItems[strTime].push(newEntry);
       }
 
@@ -61,10 +60,13 @@ export default function WeekCalendar() {
     );
   }, []);
 
-  const renderModal = (reservation) => {
-    onToggleHandler();
-    getCalendarValue(reservation);
-  };
+  const renderModal = useCallback(
+    (reservation) => {
+      onToggleHandler();
+      return getCalendarValue(reservation);
+    },
+    [onToggleHandler, getCalendarValue]
+  );
 
   const renderEmptyDate = () => {
     return (

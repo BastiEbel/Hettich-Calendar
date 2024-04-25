@@ -12,6 +12,11 @@ import { fetchEntries } from "../util/database";
 function ModalCalendarEntry({ onClose }) {
   const { entries } = useContext(CalendarContext);
   const [getItems, setGetItems] = useState(entries);
+  const [enable, setEnable] = useState({
+    enableInput: true,
+    enableButton: false,
+    textButton: "Edit"
+  });
 
   useEffect(() => {
     loadAllItems();
@@ -27,6 +32,15 @@ function ModalCalendarEntry({ onClose }) {
     });
 
     //console.log(listOfDates);
+  }
+
+  function onPressHandler() {
+    setEnable((curEnable) => ({
+      ...curEnable,
+      enableInput: false,
+      enableButton: true,
+      textButton: "Save"
+    }));
   }
 
   function selectedValue(value) {
@@ -54,6 +68,7 @@ function ModalCalendarEntry({ onClose }) {
       <View style={styles.inputContainer}>
         <Input
           //validation={!title.isValid}
+          disabled={enable.enableInput}
           value={getItems.title}
           placeholder="Title"
           label="Title"
@@ -72,12 +87,14 @@ function ModalCalendarEntry({ onClose }) {
         )} */}
         <View /*style={showDescription ? styles.selectContainer : null}*/>
           <SelectBox
+            disabled={enable.enableInput}
             selectedValue={(val) => selectedValue(val)}
             getValue={getItems.definition}
             //validation={!definition.isValid}
           />
         </View>
         <Input
+          disabled={enable.enableInput}
           placeholder="DD-MM-YYYY"
           label="Date"
           size={40}
@@ -103,7 +120,13 @@ function ModalCalendarEntry({ onClose }) {
           <Button onPress={onClose} style={styles.styleButton} mode="flat">
             Cancel
           </Button>
-          <Button style={styles.styleButton}>Edit</Button>
+          <Button
+            disabled={enable.enableButton}
+            onPress={onPressHandler}
+            style={styles.styleButton}
+          >
+            {enable.textButton}
+          </Button>
         </View>
       </View>
     </View>

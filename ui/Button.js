@@ -1,14 +1,21 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { GlobalStyles } from "../constants/styles";
 
-function Button({ children, onPress, mode, style }) {
+function Button({ children, onPress, mode, style, disabled }) {
   return (
     <View style={style}>
       <Pressable
+        disabled={disabled}
         onPress={onPress}
         style={({ pressed }) => pressed && styles.pressed}
       >
-        <View style={[styles.button, mode === "flat" && styles.flat]}>
+        <View
+          style={[
+            styles.button,
+            mode === "flat" && styles.flat,
+            disabled ? styles.disabledButton : ""
+          ]}
+        >
           <Text style={[styles.buttonText, mode === "flat" && styles.flatText]}>
             {children}
           </Text>
@@ -39,11 +46,14 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   flatText: {
-    color: GlobalStyles.colors.primary700
+    color: GlobalStyles.colors.gray700
+  },
+  disabledButton: {
+    backgroundColor: GlobalStyles.colors.gray100
   },
   pressed: {
     opacity: 0.75,
-    backgroundColor: GlobalStyles.colors.primary50,
+    backgroundColor: GlobalStyles.colors.primary200,
     borderRadius: 4
   }
 });

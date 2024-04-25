@@ -14,7 +14,8 @@ export default function Input({
   time,
   onPress,
   getValue,
-  validation
+  validation,
+  disabled
 }) {
   const entriesCTX = useContext(CalendarContext);
   const inputStyles = {
@@ -36,6 +37,7 @@ export default function Input({
     return (
       <View style={styles.container}>
         <TextInput
+          editable={!disabled}
           placeholder={placeholder}
           value={value}
           style={[
@@ -55,6 +57,7 @@ export default function Input({
       <Text style={styles.textLabel}>{label}:</Text>
       <View style={styles.dateContainer}>
         <TextInput
+          editable={!disabled}
           placeholder={placeholder}
           style={[inputStyles, styles.input, validation && styles.valid]}
           value={value}

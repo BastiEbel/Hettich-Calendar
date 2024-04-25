@@ -11,7 +11,7 @@ const data = [
   { key: "3", value: "Date" }
 ];
 
-function SelectBox({ selectedValue, validation, getValue }) {
+function SelectBox({ selectedValue, validation, getValue, disabled }) {
   const [selected, setSelected] = useState(getValue);
   const [changePlaceholder, setChangePlaceholder] = useState(getValue);
   const { multiDateSelected } = useContext(CalendarContext);
@@ -58,7 +58,7 @@ function SelectBox({ selectedValue, validation, getValue }) {
         data={data}
         save="value"
         boxStyles={boxStyles}
-        dropdownStyles={dropdownStyles}
+        dropdownStyles={disabled ? { display: "none" } : dropdownStyles}
         dropdownTextStyles={dropdownTextStyles}
       />
     </View>
