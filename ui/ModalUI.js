@@ -1,6 +1,5 @@
 import { StyleSheet } from "react-native";
 import Modal from "react-native-modal";
-import { GlobalStyles } from "../constants/styles";
 
 function ModalUI({ openModal, children }) {
   return (

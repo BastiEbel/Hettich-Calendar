@@ -48,6 +48,24 @@ export function deleteTable() {
   return promise;
 }
 
+export function deleteItem(id) {
+  const promise = new Promise((resolve, reject) => {
+    database.transaction((tx) => {
+      tx.executeSql(
+        `DELETE FROM entries WHERE id=?`,
+        [id],
+        () => {
+          resolve();
+        },
+        (_, error) => {
+          reject(error);
+        }
+      );
+    });
+  });
+  return promise;
+}
+
 export function insertEntries(entries) {
   const promise = new Promise((resolve, reject) => {
     database.transaction((tx) => {
@@ -113,10 +131,11 @@ export function fetchDetailEntries(id) {
           const entries = new Entries(
             dbEntries.title,
             dbEntries.description,
-            {
-              startDate: dbEntries.startDate,
-              lastDate: dbEntries.lastDate
-            },
+            dbEntries.definition,
+            dbEntries.markedDate,
+            dbEntries.isDescriptionVisible,
+            dbEntries.date.dateValue,
+            dbEntries.date.time,
             entries.id
           );
           resolve(entries);

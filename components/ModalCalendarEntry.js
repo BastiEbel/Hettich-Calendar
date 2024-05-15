@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 import Button from "../ui/Button";
+import IconButton from "../ui/IconButton";
 import { CalendarContext } from "../store/calendar-context";
 import { GlobalStyles } from "../constants/styles";
 import Input from "../ui/Input";
@@ -11,7 +12,7 @@ import { fetchEntries } from "../util/database";
 
 function ModalCalendarEntry({ onClose }) {
   const { entries } = useContext(CalendarContext);
-  const [getItems, setGetItems] = useState(entries);
+  const [getItems, setGetItems] = useState();
   const [enable, setEnable] = useState({
     enableInput: true,
     enableButton: false,
@@ -26,12 +27,10 @@ function ModalCalendarEntry({ onClose }) {
     const getLoadedItems = await fetchEntries();
     let listOfDates = [];
     getLoadedItems.map((dateValue) => {
-      if (dateValue.dateValue === getItems.dateValue) {
+      if (dateValue.dateValue === entries.dateValue) {
         listOfDates.push(dateValue);
       }
     });
-
-    //console.log(listOfDates);
   }
 
   function onPressHandler() {
@@ -49,6 +48,14 @@ function ModalCalendarEntry({ onClose }) {
 
   return (
     <View style={styles.bodyContainer}>
+      <View style={styles.closeContainer}>
+        <IconButton
+          icon="close-outline"
+          onPress={onClose}
+          size={48}
+          color={GlobalStyles.colors.primary500}
+        />
+      </View>
       {/* {showPicker && (
         <AddDateTime
           value={date.dateValue}
@@ -69,27 +76,31 @@ function ModalCalendarEntry({ onClose }) {
         <Input
           //validation={!title.isValid}
           disabled={enable.enableInput}
-          value={getItems.title}
+          value={entries.title}
           placeholder="Title"
           label="Title"
           size={40}
           //getValue={onChangeTitleHandler}
         />
-        {/* {showDescription && (
+        {entries.isDescriptionVisible === 1 && (
           <Input
             validation={!description.isValid}
-            value={description.value}
+            value={entries.description}
             placeholder="Description"
             size={100}
             multiline
             getValue={onChangeDescriptionHandler}
           />
-        )} */}
-        <View /*style={showDescription ? styles.selectContainer : null}*/>
+        )}
+        <View
+          style={
+            entries.isDescriptionVisible === 1 ? styles.selectContainer : null
+          }
+        >
           <SelectBox
             disabled={enable.enableInput}
             selectedValue={(val) => selectedValue(val)}
-            getValue={getItems.definition}
+            getValue={entries.definition}
             //validation={!definition.isValid}
           />
         </View>
@@ -98,10 +109,10 @@ function ModalCalendarEntry({ onClose }) {
           placeholder="DD-MM-YYYY"
           label="Date"
           size={40}
-          value={getItems.dateValue}
+          value={entries.dateValue}
           shown={true}
         />
-        {/* {showDescription && (
+        {entries.isDescriptionVisible === 1 && (
           <Input
             placeholder="HH:MM"
             label="Time"
@@ -110,15 +121,15 @@ function ModalCalendarEntry({ onClose }) {
             time={true}
             onPress={onTimeChange}
           />
-        )} */}
+        )}
         {/* {formIsInvalid && (
           <Text style={styles.errorText}>
             Invalid input values - please check your entered data!
           </Text>
         )} */}
         <View style={styles.buttonContainer}>
-          <Button onPress={onClose} style={styles.styleButton} mode="flat">
-            Cancel
+          <Button style={styles.styleButton} mode="flat">
+            Delete
           </Button>
           <Button
             disabled={enable.enableButton}
@@ -139,10 +150,14 @@ const styles = StyleSheet.create({
   bodyContainer: {
     backgroundColor: GlobalStyles.colors.primary100,
     width: "90%",
-    minHeight: 600,
+    //minHeight: 600,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 8
+  },
+  closeContainer: {
+    width: "100%",
+    alignItems: "flex-end"
   },
   inputContainer: {
     width: 300,

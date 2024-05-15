@@ -8,6 +8,7 @@ import ModalCalendarEntry from "./ModalCalendarEntry";
 import { CalendarContext } from "../store/calendar-context";
 
 const INITIAL_DATE = new Date();
+
 export default function WeekCalendar() {
   const [weeklyState, setWeeklyState] = useState({});
   const [openModal, setOpenModal] = useState(false);
@@ -30,7 +31,7 @@ export default function WeekCalendar() {
 
       return { ...prevWeeklyState, items: newItems };
     });
-  }, []);
+  }, [fetchEntries]);
 
   const onToggleHandler = () => {
     setOpenModal((prevModal) => !prevModal);
@@ -42,7 +43,7 @@ export default function WeekCalendar() {
 
     return (
       <TouchableOpacity
-        style={[styles.item, { height: reservation.height }]}
+        style={[styles.item, { height: "auto" }]}
         onPress={() => renderModal(reservation)}
       >
         <Text style={{ fontSize: 20, color, marginBottom: 16 }}>
@@ -60,13 +61,10 @@ export default function WeekCalendar() {
     );
   }, []);
 
-  const renderModal = useCallback(
-    (reservation) => {
-      onToggleHandler();
-      return getCalendarValue(reservation);
-    },
-    [onToggleHandler, getCalendarValue]
-  );
+  const renderModal = (reservation) => {
+    onToggleHandler();
+    return getCalendarValue(reservation);
+  };
 
   const renderEmptyDate = () => {
     return (
@@ -80,17 +78,23 @@ export default function WeekCalendar() {
     return r1.markedDates !== r2.markedDates;
   };
   return (
-    <CalendarProvider date={INITIAL_DATE}>
+    <CalendarProvider>
       <Agenda
         items={weeklyState.items}
         loadItemsForMonth={loadItems}
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
         selected={INITIAL_DATE}
         renderItem={renderItem}
         renderEmptyData={renderEmptyDate}
-        rowHasChanged={rowHasChanged}
-        showClosingKnob={true}
-        pastScrollRange={(new Date().getFullYear() - 1900) * 12}
-        futureScrollRange={(2099 - new Date().getFullYear()) * 12}
+        date={INITIAL_DATE}
+        //rowHasChanged={rowHasChanged}
+        //pastScrollRange={(new Date().getFullYear() - 2010) * 12}
+        //futureScrollRange={(2050 - new Date().getFullYear()) * 12}
+        //removeClippedSubviews
+        getItemLayout={(index) => {
+          index;
+        }}
         theme={{
           backgroundColor: GlobalStyles.colors.primary200,
           dayTextColor: "black"
