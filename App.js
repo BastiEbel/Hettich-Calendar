@@ -8,6 +8,7 @@ import moment from "moment";
 
 import { GlobalStyles } from "./constants/styles";
 import IconButton from "./ui/IconButton";
+import LoadingOverlay from "./ui/LoadingOverlay";
 import Home from "./screens/Home";
 import ManageScreen from "./screens/ManageScreen";
 import WeekScreen from "./screens/WeekScreen";
@@ -96,9 +97,21 @@ function ManageCalendarOverview() {
 }
 
 export default function App() {
+  const [dbInitialized, setDbInitialized] = useState(false);
+
   useEffect(() => {
-    init();
+    init()
+      .then(() => {
+        setDbInitialized(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
+
+  if (!dbInitialized) {
+    return <LoadingOverlay />;
+  }
 
   return (
     <>
