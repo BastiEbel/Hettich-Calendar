@@ -1,15 +1,51 @@
-import { useContext, useState, useCallback } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { Agenda, CalendarProvider } from "react-native-calendars";
+import { useContext, useState, useCallback, memo, PureComponent } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  SafeAreaView
+} from "react-native";
+import { Agenda } from "react-native-calendars";
 import { fetchEntries } from "../util/database";
 import { GlobalStyles } from "../constants/styles";
 import ModalUI from "../ui/ModalUI";
 import ModalCalendarEntry from "./ModalCalendarEntry";
 import { CalendarContext } from "../store/calendar-context";
 
-const INITIAL_DATE = new Date();
+class ItemComponent extends PureComponent {
+  render() {
+    const { reservation, renderModal } = this.props;
 
-export default function WeekCalendar() {
+    return (
+      <TouchableOpacity
+        key={reservation.id}
+        style={[styles.item, { height: "auto" }]}
+        onPress={() => {
+          renderModal(reservation);
+        }}
+      >
+        <Text style={{ fontSize: 20, color: "black", marginBottom: 16 }}>
+          {reservation.title}
+        </Text>
+        <Text style={{ fontSize: 10, color: "black", marginBottom: 8 }}>
+          {reservation.dateValue}
+        </Text>
+        <Text style={{ fontSize: 10, color: "black" }}>
+          {reservation.definition}
+        </Text>
+
+        {reservation.isDescriptionVisible == 1 && (
+          <Text style={{ fontSize: 10, color: "black" }}>
+            {reservation.description}
+          </Text>
+        )}
+      </TouchableOpacity>
+    );
+  }
+}
+
+function WeekCalendar() {
   const [weeklyState, setWeeklyState] = useState({});
   const [openModal, setOpenModal] = useState(false);
   const { getCalendarValue } = useContext(CalendarContext);
@@ -18,7 +54,7 @@ export default function WeekCalendar() {
     const loadedEntries = await fetchEntries();
     setWeeklyState((prevWeeklyState) => {
       const items = prevWeeklyState.items || {};
-      const newItems = { items };
+      const newItems = {};
 
       for (const newEntry of loadedEntries) {
         const strTime = newEntry.markedDates;
@@ -29,35 +65,20 @@ export default function WeekCalendar() {
         newItems[strTime].push(newEntry);
       }
 
+      Object.keys(items).forEach((key) => {
+        newItems[key] = items[key];
+      });
       return { ...prevWeeklyState, items: newItems };
     });
   }, [fetchEntries]);
 
   const onToggleHandler = () => {
-    setOpenModal((prevModal) => !prevModal);
+    return setOpenModal((prevModal) => !prevModal);
   };
 
-  const renderItem = useCallback((reservation, isFirst) => {
-    const fontSize = isFirst ? 12 : 10;
-    const color = isFirst ? "black" : "#43515c";
-
+  const renderItem = useCallback((reservation) => {
     return (
-      <TouchableOpacity
-        style={[styles.item, { height: "auto" }]}
-        onPress={() => renderModal(reservation)}
-      >
-        <Text style={{ fontSize: 20, color, marginBottom: 16 }}>
-          {reservation.title}
-        </Text>
-        <Text style={{ fontSize, color, marginBottom: 8 }}>
-          {reservation.dateValue}
-        </Text>
-        <Text style={{ fontSize, color }}>{reservation.definition}</Text>
-
-        {reservation.isDescriptionVisible == 1 && (
-          <Text style={{ fontSize, color }}>{reservation.description}</Text>
-        )}
-      </TouchableOpacity>
+      <ItemComponent reservation={reservation} renderModal={renderModal} />
     );
   }, []);
 
@@ -78,23 +99,13 @@ export default function WeekCalendar() {
     return r1.markedDates !== r2.markedDates;
   };
   return (
-    <CalendarProvider>
+    <SafeAreaView style={styles.container}>
       <Agenda
         items={weeklyState.items}
         loadItemsForMonth={loadItems}
-        initialNumToRender={10}
-        maxToRenderPerBatch={10}
-        selected={INITIAL_DATE}
         renderItem={renderItem}
         renderEmptyData={renderEmptyDate}
-        date={INITIAL_DATE}
         //rowHasChanged={rowHasChanged}
-        //pastScrollRange={(new Date().getFullYear() - 2010) * 12}
-        //futureScrollRange={(2050 - new Date().getFullYear()) * 12}
-        //removeClippedSubviews
-        getItemLayout={(index) => {
-          index;
-        }}
         theme={{
           backgroundColor: GlobalStyles.colors.primary200,
           dayTextColor: "black"
@@ -103,11 +114,15 @@ export default function WeekCalendar() {
       <ModalUI openModal={openModal}>
         <ModalCalendarEntry onClose={onToggleHandler} />
       </ModalUI>
-    </CalendarProvider>
+    </SafeAreaView>
   );
 }
+export default memo(WeekCalendar);
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
   item: {
     backgroundColor: "white",
     flex: 1,
