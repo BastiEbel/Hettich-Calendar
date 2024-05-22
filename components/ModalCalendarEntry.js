@@ -37,6 +37,8 @@ function ModalCalendarEntry({ onClose }) {
     setEnable((curEnable) => ({
       ...curEnable,
       enableInput: false,
+      timePicker: false,
+      datePicker: false,
       enableButton: true,
       textButton: "Save"
     }));
@@ -56,7 +58,7 @@ function ModalCalendarEntry({ onClose }) {
           color={GlobalStyles.colors.primary500}
         />
       </View>
-      {/* {showPicker && (
+      {enable.datePicker && (
         <AddDateTime
           value={date.dateValue}
           display="spinner"
@@ -64,14 +66,14 @@ function ModalCalendarEntry({ onClose }) {
           onDateChange={onDateChange}
         />
       )}
-      {showTimer && (
+      {enable.timePicker && (
         <AddDateTime
           value={date.dateValue}
           display="spinner"
           mode="time"
           onDateChange={onTimeChange}
         />
-      )} */}
+      )}
       <View style={styles.inputContainer}>
         <Input
           //validation={!title.isValid}
@@ -84,12 +86,13 @@ function ModalCalendarEntry({ onClose }) {
         />
         {entries.isDescriptionVisible === 1 && (
           <Input
-            validation={!description.isValid}
+            //validation={!description.isValid}
+            disabled={enable.enableInput}
             value={entries.description}
             placeholder="Description"
             size={100}
             multiline
-            getValue={onChangeDescriptionHandler}
+            //getValue={onChangeDescriptionHandler}
           />
         )}
         <View
@@ -114,12 +117,13 @@ function ModalCalendarEntry({ onClose }) {
         />
         {entries.isDescriptionVisible === 1 && (
           <Input
+            disabled={enable.enableInput}
             placeholder="HH:MM"
             label="Time"
             size={40}
-            value={date.time}
+            value={entries.time}
             time={true}
-            onPress={onTimeChange}
+            //onPress={onTimeChange}
           />
         )}
         {/* {formIsInvalid && (

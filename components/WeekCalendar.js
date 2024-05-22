@@ -1,4 +1,4 @@
-import { useContext, useState, useCallback, memo, PureComponent } from "react";
+import { useContext, useState, useCallback, memo } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,10 +13,8 @@ import ModalUI from "../ui/ModalUI";
 import ModalCalendarEntry from "./ModalCalendarEntry";
 import { CalendarContext } from "../store/calendar-context";
 
-class ItemComponent extends PureComponent {
-  render() {
-    const { reservation, renderModal } = this.props;
-
+const ProgramItem = memo(
+  ({ reservation, renderModal }) => {
     return (
       <TouchableOpacity
         key={reservation.id}
@@ -42,8 +40,11 @@ class ItemComponent extends PureComponent {
         )}
       </TouchableOpacity>
     );
+  },
+  (prevProps, nextProps) => {
+    return prevProps.item === nextProps.item;
   }
-}
+);
 
 function WeekCalendar() {
   const [weeklyState, setWeeklyState] = useState({});
@@ -73,13 +74,11 @@ function WeekCalendar() {
   }, [fetchEntries]);
 
   const onToggleHandler = () => {
-    return setOpenModal((prevModal) => !prevModal);
+    setOpenModal((prevModal) => !prevModal);
   };
 
   const renderItem = useCallback((reservation) => {
-    return (
-      <ItemComponent reservation={reservation} renderModal={renderModal} />
-    );
+    return <ProgramItem reservation={reservation} renderModal={renderModal} />;
   }, []);
 
   const renderModal = (reservation) => {
@@ -98,6 +97,7 @@ function WeekCalendar() {
   const rowHasChanged = (r1, r2) => {
     return r1.markedDates !== r2.markedDates;
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <Agenda
@@ -117,7 +117,7 @@ function WeekCalendar() {
     </SafeAreaView>
   );
 }
-export default memo(WeekCalendar);
+export default WeekCalendar;
 
 const styles = StyleSheet.create({
   container: {
