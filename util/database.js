@@ -51,10 +51,11 @@ export function deleteTable() {
 export function deleteItem(id) {
   const promise = new Promise((resolve, reject) => {
     database.transaction((tx) => {
-      if (id.length === 0) {
+      for (let i = 0; i < id.length; i++) {
+        const idElement = id[i];
         tx.executeSql(
           `DELETE FROM entries WHERE id=?`,
-          [id],
+          [idElement],
           () => {
             resolve();
           },
@@ -62,20 +63,6 @@ export function deleteItem(id) {
             reject(error);
           }
         );
-      } else {
-        for (let id = 0; id < id.length; id++) {
-          const idElement = id[id];
-          tx.executeSql(
-            `DELETE FROM entries WHERE id=?`,
-            [idElement],
-            () => {
-              resolve();
-            },
-            (_, error) => {
-              reject(error);
-            }
-          );
-        }
       }
     });
   });

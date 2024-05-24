@@ -1,4 +1,4 @@
-import { useContext, useState, useCallback, memo } from "react";
+import { useContext, useState, useCallback, memo, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   SafeAreaView
 } from "react-native";
+import moment from "moment";
+
 import { Agenda } from "react-native-calendars";
 import { fetchEntries } from "../util/database";
 import { GlobalStyles } from "../constants/styles";
@@ -51,27 +53,28 @@ function WeekCalendar() {
   const [openModal, setOpenModal] = useState(false);
   const { getCalendarValue } = useContext(CalendarContext);
 
-  const loadItems = useCallback(async () => {
+  useEffect(() => {
+    loadItems();
+  }, [fetchEntries, openModal]);
+
+  const loadItems = async () => {
     const loadedEntries = await fetchEntries();
-    setWeeklyState((prevWeeklyState) => {
-      const items = prevWeeklyState.items || {};
-      const newItems = {};
+    const newItems = {};
 
-      for (const newEntry of loadedEntries) {
-        const strTime = newEntry.markedDates;
+    for (const newEntry of loadedEntries) {
+      const strTime = newEntry.markedDates;
 
-        if (!newItems[strTime]) {
-          newItems[strTime] = [];
-        }
-        newItems[strTime].push(newEntry);
+      if (!newItems[strTime]) {
+        newItems[strTime] = [];
       }
+      newItems[strTime].push(newEntry);
+    }
 
-      Object.keys(items).forEach((key) => {
-        newItems[key] = items[key];
-      });
-      return { ...prevWeeklyState, items: newItems };
-    });
-  }, [fetchEntries]);
+    setWeeklyState((prevWeeklyState) => ({
+      ...prevWeeklyState,
+      items: newItems
+    }));
+  };
 
   const onToggleHandler = () => {
     setOpenModal((prevModal) => !prevModal);
@@ -97,15 +100,16 @@ function WeekCalendar() {
   const rowHasChanged = (r1, r2) => {
     return r1.markedDates !== r2.markedDates;
   };
-
+  console.log(weeklyState.items);
   return (
     <SafeAreaView style={styles.container}>
       <Agenda
         items={weeklyState.items}
         loadItemsForMonth={loadItems}
+        selected={moment().format("YYYY-MM-DD")}
         renderItem={renderItem}
         renderEmptyData={renderEmptyDate}
-        //rowHasChanged={rowHasChanged}
+        rowHasChanged={rowHasChanged}
         theme={{
           backgroundColor: GlobalStyles.colors.primary200,
           dayTextColor: "black"

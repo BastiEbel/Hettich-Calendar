@@ -8,30 +8,18 @@ import { GlobalStyles } from "../constants/styles";
 import Input from "../ui/Input";
 import AddDateTime from "./AddDateTime";
 import SelectBox from "./SelectBox";
-import { fetchEntries } from "../util/database";
+import { deleteItem, fetchEntries } from "../util/database";
 
 function ModalCalendarEntry({ onClose }) {
   const { entries } = useContext(CalendarContext);
   const [getItems, setGetItems] = useState();
   const [enable, setEnable] = useState({
     enableInput: true,
+    timePicker: false,
+    datePicker: false,
     enableButton: false,
     textButton: "Edit"
   });
-
-  useEffect(() => {
-    loadAllItems();
-  }, []);
-
-  async function loadAllItems() {
-    const getLoadedItems = await fetchEntries();
-    let listOfDates = [];
-    getLoadedItems.map((dateValue) => {
-      if (dateValue.dateValue === entries.dateValue) {
-        listOfDates.push(dateValue);
-      }
-    });
-  }
 
   function onPressHandler() {
     setEnable((curEnable) => ({
@@ -42,6 +30,18 @@ function ModalCalendarEntry({ onClose }) {
       enableButton: true,
       textButton: "Save"
     }));
+  }
+
+  async function onDeleteHandler() {
+    const getLoadedItems = await fetchEntries();
+    let listOfDates = [];
+    getLoadedItems.map((id) => {
+      if (id.dateValue === entries.dateValue) {
+        listOfDates.push(id.id);
+        deleteItem(listOfDates);
+      }
+    });
+    onClose();
   }
 
   function selectedValue(value) {
@@ -132,7 +132,11 @@ function ModalCalendarEntry({ onClose }) {
           </Text>
         )} */}
         <View style={styles.buttonContainer}>
-          <Button style={styles.styleButton} mode="flat">
+          <Button
+            onPress={onDeleteHandler}
+            style={styles.styleButton}
+            mode="flat"
+          >
             Delete
           </Button>
           <Button

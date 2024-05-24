@@ -11,9 +11,8 @@ import SelectBox from "./SelectBox";
 import { deleteTable, insertEntries } from "../util/database";
 
 export default function FormManagement({ onCancel, onSubmit }) {
-  const { entries, setDate, markedDates, clearSelectedDates } = useContext(
-    CalendarContext
-  );
+  const { entries, setDate, markedDates, clearSelectedDates } =
+    useContext(CalendarContext);
   const [addDate, setAddDate] = useState(setDate);
   const [showDescription, setShowDescription] = useState(false);
   const [inputs, setInputs] = useState({
@@ -23,8 +22,8 @@ export default function FormManagement({ onCancel, onSubmit }) {
     isDescriptionVisible: false,
     date: {
       dateValue: "",
-      time: "",
-    },
+      time: ""
+    }
   });
   const [showPicker, setShowPicker] = useState(false);
   const [showTimer, setShowTimer] = useState(false);
@@ -37,8 +36,8 @@ export default function FormManagement({ onCancel, onSubmit }) {
         ...curInput,
         date: {
           dateValue: setDate,
-          time: moment(newTime).format("HH:mm"),
-        },
+          time: moment(newTime).format("HH:mm")
+        }
       }));
     }
   }, [setDate, addDate]);
@@ -80,7 +79,7 @@ export default function FormManagement({ onCancel, onSubmit }) {
   function onChangeTitleHandler(value) {
     setInputs((curInputs) => ({
       ...curInputs,
-      title: { value: value, isValid: true },
+      title: { value: value, isValid: true }
     }));
   }
 
@@ -89,7 +88,7 @@ export default function FormManagement({ onCancel, onSubmit }) {
       setInputs((curInputs) => ({
         ...curInputs,
         description: { value: value, isValid: true },
-        isDescriptionVisible: true,
+        isDescriptionVisible: true
       }));
     }
   }
@@ -102,7 +101,7 @@ export default function FormManagement({ onCancel, onSubmit }) {
     }
     setInputs((curInputs) => ({
       ...curInputs,
-      definition: { value: val, isValid: true },
+      definition: { value: val, isValid: true }
     }));
   }
 
@@ -117,10 +116,10 @@ export default function FormManagement({ onCancel, onSubmit }) {
       isDescriptionVisible: inputs.isDescriptionVisible,
       date: {
         dateValue: date.dateValue,
-        time: date.time,
-      },
+        time: date.time
+      }
     };
-    console.log(entries);
+
     const titleIsValid = entries.title.trim().length > 0;
     if (showDescription) {
       descriptionIsValid = entries.description.trim().length > 0;
@@ -133,16 +132,16 @@ export default function FormManagement({ onCancel, onSubmit }) {
         title: { value: curInputs.title.value, isValid: titleIsValid },
         description: {
           value: curInputs.description.value,
-          isValid: descriptionIsValid,
+          isValid: descriptionIsValid
         },
         definition: {
           value: curInputs.definition.value,
-          isValid: definitionIsValid,
+          isValid: definitionIsValid
         },
         date: {
           dateValue: curInputs.date.dateValue,
-          time: curInputs.date.time,
-        },
+          time: curInputs.date.time
+        }
       }));
       return;
     }
@@ -165,8 +164,8 @@ export default function FormManagement({ onCancel, onSubmit }) {
       isDescriptionVisible: false,
       date: {
         dateValue: "",
-        time: "",
-      },
+        time: ""
+      }
     }));
     clearSelectedDates();
     onSubmit();
@@ -264,30 +263,30 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: GlobalStyles.colors.primary100,
+    backgroundColor: GlobalStyles.colors.primary100
   },
   inputContainer: {
     width: 300,
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 24,
+    paddingVertical: 24
   },
   selectContainer: {
-    marginTop: 60,
+    marginTop: 60
   },
   buttonContainer: {
     marginVertical: 48,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "center"
   },
   styleButton: {
     minWidth: 80,
-    marginHorizontal: 16,
+    marginHorizontal: 16
   },
   errorText: {
     textAlign: "center",
     color: GlobalStyles.colors.error500,
-    margin: 16,
-  },
+    margin: 16
+  }
 });
