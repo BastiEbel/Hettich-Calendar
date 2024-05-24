@@ -4,7 +4,8 @@ import {
   Text,
   View,
   TouchableOpacity,
-  SafeAreaView
+  SafeAreaView,
+  ActivityIndicator
 } from "react-native";
 import moment from "moment";
 
@@ -51,9 +52,17 @@ const ProgramItem = memo(
 function WeekCalendar() {
   const [weeklyState, setWeeklyState] = useState({});
   const [openModal, setOpenModal] = useState(false);
+  const [entriesDbInitialized, setEntriesDbInitialized] = useState(false);
   const { getCalendarValue } = useContext(CalendarContext);
 
   useEffect(() => {
+    fetchEntries()
+      .then(() => {
+        setEntriesDbInitialized(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     loadItems();
   }, [fetchEntries, openModal]);
 
@@ -92,6 +101,12 @@ function WeekCalendar() {
   const renderEmptyDate = () => {
     return (
       <View style={styles.emptyDate}>
+        {!entriesDbInitialized && (
+          <ActivityIndicator
+            size="large"
+            color={GlobalStyles.colors.accent500}
+          />
+        )}
         <Text style={{ textAlign: "center" }}>This is empty date!</Text>
       </View>
     );
@@ -100,7 +115,7 @@ function WeekCalendar() {
   const rowHasChanged = (r1, r2) => {
     return r1.markedDates !== r2.markedDates;
   };
-  console.log(weeklyState.items);
+
   return (
     <SafeAreaView style={styles.container}>
       <Agenda
