@@ -63,27 +63,27 @@ function WeekCalendar() {
       .catch((err) => {
         console.log(err);
       });
-    loadItems();
-  }, [fetchEntries, openModal]);
 
-  const loadItems = async () => {
-    const loadedEntries = await fetchEntries();
-    const newItems = {};
+    const loadItems = async () => {
+      const loadedEntries = await fetchEntries();
+      const newItems = {};
 
-    for (const newEntry of loadedEntries) {
-      const strTime = newEntry.markedDates;
+      for (const newEntry of loadedEntries) {
+        const strTime = newEntry.markedDates;
 
-      if (!newItems[strTime]) {
-        newItems[strTime] = [];
+        if (!newItems[strTime]) {
+          newItems[strTime] = [];
+        }
+        newItems[strTime].push(newEntry);
       }
-      newItems[strTime].push(newEntry);
-    }
 
-    setWeeklyState((prevWeeklyState) => ({
-      ...prevWeeklyState,
-      items: newItems
-    }));
-  };
+      setWeeklyState((prevWeeklyState) => ({
+        ...prevWeeklyState,
+        items: newItems
+      }));
+    };
+    loadItems();
+  }, [openModal]);
 
   const onToggleHandler = () => {
     setOpenModal((prevModal) => !prevModal);
@@ -120,7 +120,6 @@ function WeekCalendar() {
     <SafeAreaView style={styles.container}>
       <Agenda
         items={weeklyState.items}
-        loadItemsForMonth={loadItems}
         selected={moment().format("YYYY-MM-DD")}
         renderItem={renderItem}
         renderEmptyData={renderEmptyDate}
